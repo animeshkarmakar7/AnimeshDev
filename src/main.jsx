@@ -13,6 +13,7 @@ import {
   Database,
   Download,
   GraduationCap,
+  Layers,
   Link,
   Mail,
   MapPin,
@@ -22,6 +23,7 @@ import {
   Server,
   ShieldCheck,
   Sparkles,
+  TrendingUp,
   Workflow,
   X,
 } from 'lucide-react';
@@ -93,7 +95,7 @@ const skills = [
   },
 ];
 
-const projects = [
+const genAiProjects = [
   {
     title: 'LegalDocAI',
     subtitle: 'Generative AI System for Legal Document Analysis',
@@ -152,6 +154,49 @@ const projects = [
       ['Neha', 'A RAG conversational layer helps teams query inventory and demand context.'],
       ['Aarav', 'So it connects prediction with action.'],
       ['Neha', 'If you want to know more, check the repo, README, architecture, and images here.'],
+    ],
+  },
+];
+
+const mlProjects = [
+  {
+    title: 'Movie Recommender',
+    subtitle: 'Content-Based, Collaborative & Hybrid Movie Recommendation Engine',
+    objective: 'A MovieLens-style recommender that blends content-based filtering, collaborative filtering, and a tunable hybrid model, backed by KMeans segmentation of users and movies.',
+    link: 'https://github.com/animeshkarmakar7/recommendationSystem',
+    tags: ['Content-Based', 'Collaborative Filtering', 'Hybrid', 'KMeans', 'Cosine Similarity'],
+    highlights: [
+      'Hybrid score = content_weight × content_score + collaborative_weight × collaborative_score, tunable via CLI flags',
+      'KMeans clustering profiles 5 user segments and 6 movie segments (e.g. high-rating users, animation/adventure cluster)',
+      'Ratings normalized per user (rating_user_centered) to strip out individual rating bias before modeling',
+      'Sparse movie × user matrix keeps collaborative filtering fast on a large, mostly-empty ratings dataset',
+    ],
+  },
+  {
+    title: 'SaaS Customer Churn Intelligence',
+    subtitle: 'SQL + ML Early-Warning System for Revenue-at-Risk',
+    objective: 'An end-to-end pipeline pairing a 16-script MySQL analytics layer with a 5-stage Python ML pipeline and a Power BI dashboard to flag customers before they churn.',
+    link: 'https://github.com/animeshkarmakar7/CustomerChurnReport',
+    tags: ['SQL', 'XGBoost', 'SHAP', 'Power BI', 'RFM Segmentation'],
+    highlights: [
+      'Scored 7,043 customers; surfaced 2,178 high-risk accounts holding 36.99% of MRR ($168.72K/mo, $2.02M ARR)',
+      'Engineered 21+ features including LTV, engagement score, RFM, and a deterministic 0-100 risk score',
+      'Compared Logistic Regression, Random Forest, and tuned XGBoost; deployed model reached 0.84 AUC-ROC',
+      'SHAP explainability plus SMOTE balancing for the 73/27 imbalanced churn classes',
+      'Business case: ~30% retention on the high-risk segment projects ~$607K/year savings (~274% ROI)',
+    ],
+  },
+  {
+    title: 'SkyWay Flight Fare Predictor',
+    subtitle: 'Full-Stack ML App for Real-Time Flight Price Prediction',
+    objective: 'A web app that predicts flight ticket prices from airline, route, timing, and stop details, pairing a Flask/XGBoost prediction API with a React frontend for instant fare estimates.',
+    link: 'https://github.com/animeshkarmakar7/FlightFarePredictor',
+    tags: ['Flask', 'XGBoost', 'Random Forest', 'React', 'REST API'],
+    highlights: [
+      'Predicts fares from airline, source/destination, departure & arrival time, duration, and total stops',
+      'Random Forest Regressor / XGBoost model trained on a cleaned historical flight-fare dataset',
+      'React + Tailwind + Axios frontend calls the Flask prediction API for instant results',
+      'Deployed live with a Vercel frontend and Render backend',
     ],
   },
 ];
@@ -283,53 +328,123 @@ function Skills() {
   );
 }
 
-function Projects() {
+const projectCategories = [
+  { key: 'genai', label: 'Generative AI', icon: Sparkles, note: 'RAG, agents & multi-agent GenAI systems' },
+  { key: 'ml', label: 'Machine Learning', icon: BrainCircuit, note: 'Predictive models built on real datasets' },
+];
+
+function GenAiProjects() {
   const [activeProject, setActiveProject] = useState(0);
-  const project = projects[activeProject];
+  const project = genAiProjects[activeProject];
+  return (
+    <div className="project-shell">
+      <aside className="project-list">
+        {genAiProjects.map((item, index) => (
+          <button key={item.title} className={activeProject === index ? 'active' : ''} onClick={() => setActiveProject(index)}>
+            <BriefcaseBusiness size={18} />
+            <span>{item.title}</span>
+          </button>
+        ))}
+      </aside>
+      <article className="project-panel">
+        <div className="project-topline">
+          <div>
+            <div className="project-title-row">
+              <h3>{project.title}</h3>
+              <a className="title-link" href={project.link} target="_blank" rel="noreferrer">
+                Project link <ArrowUpRight size={15} />
+              </a>
+            </div>
+            <p>{project.subtitle}</p>
+          </div>
+        </div>
+        <div className="objective">
+          <ShieldCheck size={20} />
+          <p>{project.objective}</p>
+        </div>
+        <div className="tag-row">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+        <div className="chat-box">
+          {project.conversation.map(([name, line], index) => (
+            <div key={`${name}-${index}`} className={`chat-line ${index % 2 ? 'right' : 'left'}`}>
+              <b>{name}</b>
+              <p>{line}</p>
+            </div>
+          ))}
+        </div>
+        <a className="readmore" href={project.link} target="_blank" rel="noreferrer">
+          Full README, architecture, images, and GitHub link <ArrowUpRight size={18} />
+        </a>
+      </article>
+    </div>
+  );
+}
+
+function MlProjects() {
+  const [openCard, setOpenCard] = useState(0);
+  return (
+    <div className="ml-grid">
+      {mlProjects.map((item, index) => {
+        const isOpen = openCard === index;
+        return (
+          <article key={item.title} className={`ml-card ${isOpen ? 'is-open' : ''}`}>
+            <div className="ml-card-glow" />
+            <div className="ml-card-head">
+              <div className="ml-card-icon"><BrainCircuit size={22} /></div>
+              <div>
+                <h3>{item.title}</h3>
+                <p>{item.subtitle}</p>
+              </div>
+            </div>
+            <p className="ml-card-objective">{item.objective}</p>
+            <div className="tag-row ml-tag-row">{item.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
+            <button className="ml-explore-toggle" onClick={() => setOpenCard(isOpen ? -1 : index)}>
+              <Layers size={16} />
+              {isOpen ? 'Hide highlights' : 'Explore highlights'}
+              <ChevronRight size={16} className="chevron" />
+            </button>
+            {isOpen && (
+              <ul className="ml-highlights">
+                {item.highlights.map((point) => (
+                  <li key={point}>
+                    <TrendingUp size={14} />
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <a className="ml-repo-link" href={item.link} target="_blank" rel="noreferrer">
+              <Code2 size={16} /> View repo & README <ArrowUpRight size={15} />
+            </a>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
+
+function Projects() {
+  const [category, setCategory] = useState('genai');
   return (
     <section id="projects" className="section projects-section" data-reveal>
       <div className="section-heading">
         <h2>Projects</h2>
       </div>
-      <div className="project-shell">
-        <aside className="project-list">
-          {projects.map((item, index) => (
-            <button key={item.title} className={activeProject === index ? 'active' : ''} onClick={() => setActiveProject(index)}>
-              <BriefcaseBusiness size={18} />
-              <span>{item.title}</span>
-            </button>
-          ))}
-        </aside>
-        <article className="project-panel">
-          <div className="project-topline">
-            <div>
-              <div className="project-title-row">
-                <h3>{project.title}</h3>
-                <a className="title-link" href={project.link} target="_blank" rel="noreferrer">
-                  Project link <ArrowUpRight size={15} />
-                </a>
-              </div>
-              <p>{project.subtitle}</p>
-            </div>
-          </div>
-          <div className="objective">
-            <ShieldCheck size={20} />
-            <p>{project.objective}</p>
-          </div>
-          <div className="tag-row">{project.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>
-          <div className="chat-box">
-            {project.conversation.map(([name, line], index) => (
-              <div key={`${name}-${index}`} className={`chat-line ${index % 2 ? 'right' : 'left'}`}>
-                <b>{name}</b>
-                <p>{line}</p>
-              </div>
-            ))}
-          </div>
-          <a className="readmore" href={project.link} target="_blank" rel="noreferrer">
-            Full README, architecture, images, and GitHub link <ArrowUpRight size={18} />
-          </a>
-        </article>
+      <div className="project-category-tabs">
+        {projectCategories.map((cat) => (
+          <button
+            key={cat.key}
+            className={category === cat.key ? 'active' : ''}
+            onClick={() => setCategory(cat.key)}
+          >
+            <cat.icon size={18} />
+            <span>
+              {cat.label}
+              <em>{cat.note}</em>
+            </span>
+          </button>
+        ))}
       </div>
+      {category === 'genai' ? <GenAiProjects /> : <MlProjects />}
     </section>
   );
 }
