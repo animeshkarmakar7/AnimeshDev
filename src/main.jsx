@@ -279,7 +279,7 @@ function Home() {
         <div className="flip-card" aria-label="Animesh photo flip card">
           <div className="flip-card-inner">
             <div className="portrait-face front">
-              <img src="/animesh.jpeg" alt="Animesh Karmakar" />
+              <img src="/Animesh photo.png" alt="Animesh Karmakar" />
             </div>
             <div className="portrait-face back">
               <Sparkles size={44} />
