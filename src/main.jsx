@@ -138,7 +138,7 @@ const projects = [
     title: 'Sangrahak',
     subtitle: 'Predictive Demand Forecasting & Inventory AI/ML Platform',
     objective: 'Created to forecast demand, detect inventory pressure early, and help depot teams act before stock issues become operational problems.',
-    link: 'https://github.com/ShewaleParth/AI-Powered-Inventory-Control-for-Depot-Management',
+    link: 'https://github.com/animeshkarmakar7/Sangrahak-AI-powered-Inventory-Management-system',
     tags: ['Forecasting', 'XGBoost', 'ARIMA', 'Flask', 'MongoDB', 'AWS EC2'],
     people: ['Aarav', 'Neha'],
     conversation: [
