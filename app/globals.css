@@ -498,3 +498,22 @@ body{
     animation:none!important;
   }
 }
+
+
+/* Project showcase sizing / crop refinement */
+.project-sticky-copy h3{
+  font-size:clamp(2.7rem,5.4vw,6rem);
+}
+.project-visual-image{
+  object-fit:cover;
+  object-position:center center;
+  transform:scale(1.035);
+  image-rendering:auto;
+  filter:grayscale(.08) contrast(1.04) saturate(1.02);
+}
+.project-visual-slot:hover .project-visual-image{
+  transform:scale(1.055);
+}
+@media (max-width:720px){
+  .project-sticky-copy h3{font-size:15vw}
+}
