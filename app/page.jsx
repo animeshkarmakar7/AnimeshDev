@@ -55,9 +55,6 @@ function useScrollFx() {
       root.style.setProperty("--word-scale", String(1-heroOut*.9));
       root.style.setProperty("--word-opacity", String(1-heroOut));
       root.style.setProperty("--word-y", heroOut*-5+"vh");
-      root.style.setProperty("--compact-opacity", String(Math.max(0, Math.min((heroOut-.12)/.5, 1))));
-      root.style.setProperty("--compact-y", ((1-Math.max(0, Math.min((heroOut-.12)/.5,1)))*8)+"px");
-      root.style.setProperty("--compact-scale", String(.94 + Math.max(0, Math.min((heroOut-.12)/.5,1))*.06));
       root.style.setProperty("--progress", String(Math.min(y/Math.max(document.body.scrollHeight-vh,1),1)));
     };
     onScroll();
@@ -99,7 +96,7 @@ export default function Page() {
     <div className="noise" />
     <div className="landing" id="home">
       <div className="hero-nav">
-        <a href="#home" className="mono">ANIMESH / AI ENGINEER</a>
+        <a href="#home" className="nav-brand">ANIMESH KARMAKAR</a>
         <nav className="nav-links">
           <a href="#about">About</a>
           <a href="#projects">Projects</a>
@@ -117,9 +114,6 @@ export default function Page() {
           <span>ANIMESH</span>
           <span>KARMAKAR</span>
         </h1>
-      </div>
-      <div className="compact-wordmark" style={{opacity:"var(--compact-opacity)", transform:"translateY(var(--compact-y)) scale(var(--compact-scale))"}}>
-        ANIMESH KARMAKAR
       </div>
       <div className="scroll-meter"><span style={{transform:"scaleY(var(--progress))"}}/></div>
     </div>
