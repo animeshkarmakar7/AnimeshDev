@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Github, Linkedin, Mail } from "lucide-react";
+import { Github, Linkedin, Mail, MapPin } from "lucide-react";
 
 const VERTEX = `
 varying vec2 vUv;
@@ -324,8 +324,8 @@ function BlackHoleCanvas() {
         tB3: { value: levels[3].a.texture },
         uHorizon: { value: 0.25 },
         uAspect: { value: 1.6 },
-        uExposure: { value: 1.25 },
-        uBloom: { value: 0.9 },
+        uExposure: { value: 1.05 },
+        uBloom: { value: 0.72 },
         uFade: { value: 0 },
         uInvScale: { value: 1.0 / outScale },
         uTime: { value: 0 },
@@ -373,7 +373,8 @@ function BlackHoleCanvas() {
 
         const cols = hero.querySelector(".cols");
         const horizon = Math.min(0.5, Math.max(0.2, ((cols?.offsetHeight ?? 220) + 56) / h));
-        const shadow = Math.min(0.2, 0.27 * w / h);
+        // Smaller apparent shadow keeps the event-horizon "ball" compact like the reference.
+        const shadow = Math.min(0.135, 0.20 * w / h);
         sceneUniforms.uRes.value.set(sw, sh);
         sceneUniforms.uHorizon.value = horizon;
         sceneUniforms.uShadow.value = shadow;
@@ -514,9 +515,8 @@ export default function BlackHoleContact() {
           <div>
             <h3>Get in Touch</h3>
             <ul>
-              <li><a href="mailto:animeshkarmakar710@gmail.com">animeshkarmakar710@gmail.com</a></li>
-              <li><a href="https://github.com/animeshkarmakar7" target="_blank" rel="noreferrer">GitHub</a></li>
-              <li><a href="#">India</a></li>
+              <li><a href="mailto:animeshkarmakar710@gmail.com"><Mail size={16}/>animeshkarmakar710@gmail.com</a></li>
+              <li><span><MapPin size={16}/>Kalyan, Maharashtra, India</span></li>
             </ul>
           </div>
 
