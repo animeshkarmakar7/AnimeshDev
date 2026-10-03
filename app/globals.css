@@ -256,3 +256,43 @@ a{color:inherit;text-decoration:none}
   .blackhole-reference-cols{padding-top:120px}
   .blackhole-reference-cols .brand-col{padding-right:0}
 }
+
+/* Neutral radiant-grey contact UI to match the rest of the portfolio */
+.blackhole-reference-contact{
+  --ui-grey:#f1f1f1;
+  --ui-grey-mid:#b8b8b8;
+  --ui-grey-muted:#858585;
+  --ui-grey-line:rgba(255,255,255,.13);
+  --ui-grey-soft:rgba(255,255,255,.055);
+}
+.blackhole-reference-contact{
+  border-top:1px solid rgba(255,255,255,.16);
+  box-shadow:inset 0 18px 80px rgba(255,255,255,.018),inset 0 -35px 100px rgba(255,255,255,.022);
+}
+.blackhole-reference-hero{border-top:2px solid rgba(255,255,255,.26)}
+.blackhole-reference-cols{
+  background:linear-gradient(
+    to top,
+    rgba(4,4,4,.985) 0%,
+    rgba(4,4,4,.95) 30%,
+    rgba(4,4,4,.72) 54%,
+    rgba(4,4,4,0) 100%
+  );
+}
+.blackhole-reference-cols .brand,
+.blackhole-reference-cols h3{color:var(--ui-grey)}
+.blackhole-reference-cols .tagline,
+.blackhole-reference-cols a,
+.blackhole-reference-cols span{color:var(--ui-grey-mid)}
+.blackhole-reference-cols a:hover{color:#fff}
+.blackhole-reference-cols a:focus-visible{outline-color:rgba(255,255,255,.6)}
+.blackhole-reference-cols .brand-col{padding-right:10%}
+.blackhole-reference-cols ul{gap:11px}
+.blackhole-reference-cols a,
+.blackhole-reference-cols span{
+  transition:color .2s ease,opacity .2s ease;
+}
+.blackhole-reference-cols a:hover{opacity:1}
+.blackhole-reference-contact .contact-ui-divider{
+  background:rgba(255,255,255,.12);
+}
