@@ -104,17 +104,19 @@ export default function ProjectShowcase() {
     <div className="project-showcase">
       <div className="project-sticky">
         <div className="project-sticky-copy">
-          <div className="project-showcase-index">PROJECT {project.number} / {projects.length}</div>
-          <p className="project-showcase-eyebrow">{project.eyebrow}</p>
-          <h3 key={project.slug}>{project.title}</h3>
-          <p className="project-showcase-description" key={project.description}>{project.description}</p>
-          <a className="project-github-link" href={project.github} target="_blank" rel="noreferrer">
-            VIEW GITHUB <ArrowUpRight size={15} />
-          </a>
-          <div className="project-stack-block">
-            <div className="project-stack-label">TECH STACK</div>
-            <div className="project-stack-pills">
-              {project.stack.map((tech) => <span key={tech}>{tech}</span>)}
+          <div key={project.slug} className="project-smooth-panel">
+            <div className="project-showcase-index">PROJECT {project.number} / {projects.length}</div>
+            <p className="project-showcase-eyebrow">{project.eyebrow}</p>
+            <h3>{project.title}</h3>
+            <p className="project-showcase-description">{project.description}</p>
+            <a className="project-github-link" href={project.github} target="_blank" rel="noreferrer">
+              VIEW GITHUB <ArrowUpRight size={15} />
+            </a>
+            <div className="project-stack-block">
+              <div className="project-stack-label">TECH STACK</div>
+              <div className="project-stack-pills">
+                {project.stack.map((tech) => <span key={tech}>{tech}</span>)}
+              </div>
             </div>
           </div>
         </div>
@@ -137,13 +139,12 @@ export default function ProjectShowcase() {
         </div>
       </div>
 
-      <div className="project-scroll-track">
+      <div className="project-scroll-track" aria-hidden="true">
         {projects.map((item, index) => (
           <div
             className="project-scroll-step"
             key={item.slug}
             ref={(node) => { sectionRefs.current[index] = node; }}
-            aria-hidden="true"
           />
         ))}
       </div>
