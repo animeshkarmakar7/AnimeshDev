@@ -54,13 +54,26 @@ function useScrollFx() {
       root.style.setProperty("--luffy-scale", String(1+sunrise*.045));
       root.style.setProperty("--sunrise-opacity", String(sunrise*.95));
       root.style.setProperty("--word-scale", String(1-sunrise*.91));
-      root.style.setProperty("--word-opacity", String(1-Math.min(sunrise*1.15,1)));
-      root.style.setProperty("--word-y", sunrise*-7+"vh");
+      root.style.setProperty("--word-opacity", String(1-sunrise));
+      root.style.setProperty("--word-y", sunrise*-6+"vh");
+      root.style.setProperty("--compact-opacity", String(Math.max(0, Math.min((sunrise-.15)/.55, 1))));
+      root.style.setProperty("--compact-y", ((1-Math.max(0, Math.min((sunrise-.15)/.55,1)))*10)+"px");
+      root.style.setProperty("--compact-scale", String(.94 + Math.max(0, Math.min((sunrise-.15)/.55,1))*.06));
       root.style.setProperty("--progress", String(Math.min(y/Math.max(document.body.scrollHeight-vh,1),1)));
     };
     onScroll();
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    }), { threshold: 0.12 });
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
     window.addEventListener("scroll",onScroll,{passive:true});
-    return () => window.removeEventListener("scroll",onScroll);
+    return () => {
+      window.removeEventListener("scroll",onScroll);
+      observer.disconnect();
+    };
   },[]);
 }
 
