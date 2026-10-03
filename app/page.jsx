@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import {
   ArrowUpRight,
   Award,
@@ -16,10 +16,10 @@ import {
 } from "lucide-react";
 
 const projects = [
-  { title:"LegalDocAI", subtitle:"Legal document verification & risk analysis", description:"FastAPI + PostgreSQL + MinIO + Kafka + Celery system with OCR ingestion, hybrid retrieval, clause classification, and risk scoring.", tags:["RAG","OCR","Hybrid Search","FastAPI","PostgreSQL","Docker"], href:"https://github.com/animeshkarmakar7/Document-Verification-AI", icon:Layers3 },
-  { title:"TradeGuard AI", subtitle:"Multi-agent customs compliance assistant", description:"LangGraph workflow with dense + sparse retrieval, RRF fusion, and verification gates for tariff and compliance research.", tags:["LangGraph","Qdrant","BGE","BM25","RRF","FastAPI"], href:"https://github.com/animeshkarmakar7/GLOBAL-TRADE-CUSTOMS-COMPLIANCE-ASSISTANT", icon:Workflow },
-  { title:"Sangrahak", subtitle:"Predictive demand & inventory platform", description:"Demand forecasting, stock-out classification, supplier-delay prediction, inventory alerts, and conversational retrieval.", tags:["ARIMA","XGBoost","Flask","MongoDB","AWS EC2"], href:"https://github.com/animeshkarmakar7/Sangrahak-AI-powered-Inventory-Management-system", icon:Database },
-  { title:"SaaS Churn Intelligence", subtitle:"SQL + ML revenue-at-risk analytics", description:"MySQL feature engineering, churn prediction, SHAP explainability, SMOTE balancing, and Power BI reporting.", tags:["Python","SQL","XGBoost","SHAP","Power BI"], href:"https://github.com/animeshkarmakar7/CustomerChurnReport", icon:BrainCircuit },
+  { slug:"legaldocai", title:"LegalDocAI", subtitle:"Legal document verification & risk analysis", description:"FastAPI + PostgreSQL + MinIO + Kafka + Celery system with OCR ingestion, hybrid retrieval, clause classification, and risk scoring.", tags:["RAG","OCR","Hybrid Search","FastAPI","PostgreSQL","Docker"], href:"https://github.com/animeshkarmakar7/Document-Verification-AI", icon:Layers3 },
+  { slug:"tradeguard-ai", title:"TradeGuard AI", subtitle:"Multi-agent customs compliance assistant", description:"LangGraph workflow with dense + sparse retrieval, RRF fusion, and verification gates for tariff and compliance research.", tags:["LangGraph","Qdrant","BGE","BM25","RRF","FastAPI"], href:"https://github.com/animeshkarmakar7/GLOBAL-TRADE-CUSTOMS-COMPLIANCE-ASSISTANT", icon:Workflow },
+  { slug:"sangrahak", title:"Sangrahak", subtitle:"Predictive demand & inventory platform", description:"Demand forecasting, stock-out classification, supplier-delay prediction, inventory alerts, and conversational retrieval.", tags:["ARIMA","XGBoost","Flask","MongoDB","AWS EC2"], href:"https://github.com/animeshkarmakar7/Sangrahak-AI-powered-Inventory-Management-system", icon:Database },
+  { slug:"saas-churn", title:"SaaS Churn Intelligence", subtitle:"SQL + ML revenue-at-risk analytics", description:"MySQL feature engineering, churn prediction, SHAP explainability, SMOTE balancing, and Power BI reporting.", tags:["Python","SQL","XGBoost","SHAP","Power BI"], href:"https://github.com/animeshkarmakar7/CustomerChurnReport", icon:BrainCircuit },
 ];
 
 const technologies = ["Python","C++","SQL","Pandas","NumPy","Scikit-learn","XGBoost","PyTorch","TensorFlow","LangChain","LangGraph","RAG","Gemini","FastAPI","Flask","Docker","AWS","PostgreSQL","MongoDB","Kafka","ChromaDB","Qdrant","Git"];
@@ -54,18 +54,44 @@ function useScrollFx() {
       root.style.setProperty("--luffy-scale", String(1+sunrise*.045));
       root.style.setProperty("--sunrise-opacity", String(sunrise*.95));
       root.style.setProperty("--word-scale", String(1-sunrise*.91));
-      root.style.setProperty("--word-opacity", String(1-Math.min(sunrise*1.15,1)));
-      root.style.setProperty("--word-y", sunrise*-7+"vh");
+      root.style.setProperty("--word-opacity", String(1-sunrise));
+      root.style.setProperty("--word-y", sunrise*-6+"vh");
+      root.style.setProperty("--compact-opacity", String(Math.max(0, Math.min((sunrise-.15)/.55, 1))));
+      root.style.setProperty("--compact-y", ((1-Math.max(0, Math.min((sunrise-.15)/.55,1)))*10)+"px");
+      root.style.setProperty("--compact-scale", String(.94 + Math.max(0, Math.min((sunrise-.15)/.55,1))*.06));
       root.style.setProperty("--progress", String(Math.min(y/Math.max(document.body.scrollHeight-vh,1),1)));
     };
     onScroll();
+    const observer = new IntersectionObserver((entries) => entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("visible");
+        observer.unobserve(entry.target);
+      }
+    }), { threshold: 0.12 });
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
     window.addEventListener("scroll",onScroll,{passive:true});
-    return () => window.removeEventListener("scroll",onScroll);
+    return () => {
+      window.removeEventListener("scroll",onScroll);
+      observer.disconnect();
+    };
   },[]);
 }
 
 function Reveal({children,className=""}) {
-  return <div className={"reveal "+className}>{children}</div>;
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        el.classList.add("visible");
+        observer.disconnect();
+      }
+    }, { threshold: 0.12 });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return <div ref={ref} className={"reveal "+className}>{children}</div>;
 }
 
 export default function Page() {
@@ -85,8 +111,12 @@ export default function Page() {
       </div>
       <div className="hero-wordmark">
         <h1 style={{transform:"translateY(var(--word-y)) scale(var(--word-scale))",opacity:"var(--word-opacity)"}}>
-          ANIMESH KARMAKAR
+          <span>ANIMESH</span>
+          <span>KARMAKAR</span>
         </h1>
+      </div>
+      <div className="compact-wordmark" style={{opacity:"var(--compact-opacity)", transform:"translateY(var(--compact-y)) scale(var(--compact-scale))"}}>
+        ANIMESH KARMAKAR
       </div>
       <div className="scroll-meter"><span style={{transform:"scaleY(var(--progress))"}}/></div>
     </div>
@@ -124,7 +154,7 @@ export default function Page() {
         </Reveal>
         <div className="project-grid">
           {projects.map((project,i)=>{ const Icon=project.icon; return (
-            <a key={project.title} className="project-card reveal" href={project.href} target="_blank" rel="noreferrer">
+            <a key={project.title} className="project-card reveal" href={"/projects/"+project.slug}>
               <span className="project-number">0{i+1}</span>
               <div className="project-top"><div className="project-icon"><Icon size={20}/></div><ArrowUpRight size={20}/></div>
               <div className="project-body">
