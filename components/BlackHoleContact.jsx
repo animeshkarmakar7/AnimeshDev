@@ -149,7 +149,7 @@ export default function BlackHoleContact() {
         <div className="contact-column">
           <p className="contact-heading">GET IN TOUCH</p>
           <a href="mailto:animeshkarmakar710@gmail.com"><Mail size={16} />animeshkarmakar710@gmail.com</a>
-          <span><MapPin size={16} />Kalyan, Maharashtra, India</span>
+          <span><MapPin size={16} />India</span>
         </div>
 
         <div className="contact-column">
