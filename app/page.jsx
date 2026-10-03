@@ -48,17 +48,16 @@ function useScrollFx() {
     const onScroll = () => {
       const y = window.scrollY;
       const vh = Math.max(window.innerHeight,1);
-      const p = Math.min(Math.max(y/(vh*0.85),0),1.15);
-      const sunrise = Math.min(Math.max((p-0.05)/0.72,0),1);
-      root.style.setProperty("--luffy-opacity", String(1-sunrise));
-      root.style.setProperty("--luffy-scale", String(1+sunrise*.045));
-      root.style.setProperty("--sunrise-opacity", String(sunrise*.95));
-      root.style.setProperty("--word-scale", String(1-sunrise*.91));
-      root.style.setProperty("--word-opacity", String(1-sunrise));
-      root.style.setProperty("--word-y", sunrise*-6+"vh");
-      root.style.setProperty("--compact-opacity", String(Math.max(0, Math.min((sunrise-.15)/.55, 1))));
-      root.style.setProperty("--compact-y", ((1-Math.max(0, Math.min((sunrise-.15)/.55,1)))*10)+"px");
-      root.style.setProperty("--compact-scale", String(.94 + Math.max(0, Math.min((sunrise-.15)/.55,1))*.06));
+      const progress = Math.min(Math.max(y/(vh*0.72),0),1);
+      const heroOut = Math.min(Math.max((progress-0.08)/0.72,0),1);
+      root.style.setProperty("--luffy-opacity", String(1-heroOut));
+      root.style.setProperty("--luffy-scale", String(1+heroOut*.035));
+      root.style.setProperty("--word-scale", String(1-heroOut*.9));
+      root.style.setProperty("--word-opacity", String(1-heroOut));
+      root.style.setProperty("--word-y", heroOut*-5+"vh");
+      root.style.setProperty("--compact-opacity", String(Math.max(0, Math.min((heroOut-.12)/.5, 1))));
+      root.style.setProperty("--compact-y", ((1-Math.max(0, Math.min((heroOut-.12)/.5,1)))*8)+"px");
+      root.style.setProperty("--compact-scale", String(.94 + Math.max(0, Math.min((heroOut-.12)/.5,1))*.06));
       root.style.setProperty("--progress", String(Math.min(y/Math.max(document.body.scrollHeight-vh,1),1)));
     };
     onScroll();
@@ -102,12 +101,16 @@ export default function Page() {
       <div className="hero-nav">
         <a href="#home" className="mono">ANIMESH / AI ENGINEER</a>
         <nav className="nav-links">
-          <a href="#about">About</a><a href="#projects">Projects</a><a href="#stack">Stack</a><a href="#education">Education</a><a href="#certifications">Certifications</a>
+          <a href="#about">About</a>
+          <a href="#projects">Projects</a>
+          <a href="#stack">Skills</a>
+          <a href="#contact">Contact</a>
         </nav>
       </div>
       <div className="landing-stage" aria-hidden="true">
-        <div className="landing-backdrop"/>
-        <div className="sunrise"/>
+        <div className="landing-character">
+          <img src="/luffy.jpg" alt="" />
+        </div>
       </div>
       <div className="hero-wordmark">
         <h1 style={{transform:"translateY(var(--word-y)) scale(var(--word-scale))",opacity:"var(--word-opacity)"}}>
