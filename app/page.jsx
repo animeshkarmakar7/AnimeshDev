@@ -205,7 +205,7 @@ export default function Page() {
           <a href="mailto:animeshkarmakar710@gmail.com"><Sparkles size={16}/>Email</a>
           <a href="/animesh_karmakar_resume.pdf" download><Container size={16}/>Resume</a>
         </div>
-        <div className="footer-meta"><span>AI &amp; Data Science</span><span>Built with Next.js + Tailwind</span><span>2026</span></div>
+        <div className="footer-meta"><span>AI &amp; Data Science</span><span>2026</span></div>
       </footer>
     </main>
   </>;
