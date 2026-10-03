@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ArrowUpRight,
   Award,
@@ -23,6 +23,32 @@ const projects = [
 ];
 
 const technologies = ["Python","C++","SQL","Pandas","NumPy","Scikit-learn","XGBoost","PyTorch","TensorFlow","LangChain","LangGraph","RAG","Gemini","FastAPI","Flask","Docker","AWS","PostgreSQL","MongoDB","Kafka","ChromaDB","Qdrant","Git"];
+
+const techIcons = {
+  Python:"https://cdn.simpleicons.org/python",
+  "C++":"https://cdn.simpleicons.org/cplusplus",
+  SQL:"https://cdn.simpleicons.org/mysql",
+  Pandas:"https://cdn.simpleicons.org/pandas",
+  NumPy:"https://cdn.simpleicons.org/numpy",
+  "Scikit-learn":"https://cdn.simpleicons.org/scikitlearn",
+  XGBoost:"https://cdn.simpleicons.org/xgboost",
+  PyTorch:"https://cdn.simpleicons.org/pytorch",
+  TensorFlow:"https://cdn.simpleicons.org/tensorflow",
+  LangChain:"https://cdn.simpleicons.org/langchain",
+  LangGraph:"https://cdn.simpleicons.org/langgraph",
+  RAG:"https://cdn.simpleicons.org/openai",
+  Gemini:"https://cdn.simpleicons.org/googlegemini",
+  FastAPI:"https://cdn.simpleicons.org/fastapi",
+  Flask:"https://cdn.simpleicons.org/flask",
+  Docker:"https://cdn.simpleicons.org/docker",
+  AWS:"https://cdn.simpleicons.org/amazonwebservices",
+  PostgreSQL:"https://cdn.simpleicons.org/postgresql",
+  MongoDB:"https://cdn.simpleicons.org/mongodb",
+  Kafka:"https://cdn.simpleicons.org/apachekafka",
+  ChromaDB:"https://cdn.simpleicons.org/chroma",
+  Qdrant:"https://cdn.simpleicons.org/qdrant",
+  Git:"https://cdn.simpleicons.org/git"
+};
 
 const certifications = [
   ["Generative AI Fundamentals","AI fundamentals, data-driven applications and prompt engineering."],
@@ -73,6 +99,122 @@ function useScrollFx() {
   },[]);
 }
 
+function TechGlobe() {
+  const [rotation, setRotation] = useState({ yaw: -0.35, pitch: 0.12 });
+  const [active, setActive] = useState(null);
+  const drag = useRef({ active: false, x: 0, y: 0, yaw: -0.35, pitch: 0.12 });
+
+  const points = useMemo(() => {
+    const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+    return technologies.map((name, i) => {
+      const y = 1 - (i + 0.5) * (2 / technologies.length);
+      const radius = Math.sqrt(1 - y * y);
+      const theta = goldenAngle * i;
+      return { name, x: radius * Math.cos(theta), y, z: radius * Math.sin(theta) };
+    });
+  }, []);
+
+  useEffect(() => {
+    let frame;
+    let last = performance.now();
+    const tick = (now) => {
+      const delta = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      if (!drag.current.active) {
+        const nextYaw = drag.current.yaw + delta * 0.18;
+        drag.current.yaw = nextYaw;
+        setRotation({ yaw: nextYaw, pitch: drag.current.pitch });
+      }
+      frame = requestAnimationFrame(tick);
+    };
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const projected = points.map((point) => {
+    const cy = Math.cos(rotation.yaw), sy = Math.sin(rotation.yaw);
+    const cx = Math.cos(rotation.pitch), sx = Math.sin(rotation.pitch);
+    const x1 = point.x * cy + point.z * sy;
+    const z1 = -point.x * sy + point.z * cy;
+    const y2 = point.y * cx - z1 * sx;
+    const z2 = point.y * sx + z1 * cx;
+    const depth = (z2 + 1) / 2;
+    return {
+      ...point,
+      left: 50 + x1 * 42,
+      top: 50 - y2 * 42,
+      opacity: 0.26 + depth * 0.74,
+      scale: 0.72 + depth * 0.42,
+      depth,
+    };
+  });
+
+  const startDrag = (event) => {
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    drag.current = { active: true, x: event.clientX, y: event.clientY, yaw: rotation.yaw, pitch: rotation.pitch };
+  };
+
+  const moveDrag = (event) => {
+    if (!drag.current.active) return;
+    const dx = event.clientX - drag.current.x;
+    const dy = event.clientY - drag.current.y;
+    const yaw = drag.current.yaw + dx * 0.008;
+    const pitch = Math.max(-1.05, Math.min(1.05, drag.current.pitch - dy * 0.006));
+    drag.current.x = event.clientX;
+    drag.current.y = event.clientY;
+    drag.current.yaw = yaw;
+    drag.current.pitch = pitch;
+    setRotation({ yaw, pitch });
+  };
+
+  const endDrag = () => { drag.current.active = false; };
+
+  return (
+    <div
+      className="globe interactive-globe"
+      onPointerDown={startDrag}
+      onPointerMove={moveDrag}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onPointerLeave={endDrag}
+      role="application"
+      aria-label="Interactive technology globe. Drag to rotate."
+    >
+      <div className="globe-grid" />
+      <div className="globe-glow" />
+      <div className="orbit orbit-a" />
+      <div className="orbit orbit-b" />
+      <div className="globe-core">
+        <span>AI / ML</span>
+        {active && <small>{active}</small>}
+      </div>
+      <div className="tech-orbit">
+        {projected.map((tech) => (
+          <button
+            type="button"
+            key={tech.name}
+            className={`tech-node ${active === tech.name ? "is-active" : ""}`}
+            title={tech.name}
+            aria-label={tech.name}
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={() => setActive(tech.name)}
+            style={{
+              left: `${tech.left}%`,
+              top: `${tech.top}%`,
+              opacity: tech.opacity,
+              zIndex: Math.round(tech.depth * 100),
+              transform: `translate(-50%, -50%) scale(${tech.scale})`,
+            }}
+          >
+            <img src={techIcons[tech.name]} alt="" aria-hidden="true" />
+            <span>{tech.name}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function Reveal({children,className=""}) {
   const ref = useRef(null);
   useEffect(() => {
@@ -106,7 +248,7 @@ export default function Page() {
       </div>
       <div className="landing-stage" aria-hidden="true">
         <div className="landing-character">
-          <img src="/luffy.jpeg" alt="" />
+          <img src="/luffy.jpg" alt="" />
         </div>
       </div>
       <div className="hero-wordmark">
@@ -171,11 +313,7 @@ export default function Page() {
         </Reveal>
         <div className="globe-layout reveal">
           <div className="stack-copy"><p className="big-copy">Code at the core.<br/>Infrastructure around it.</p><p className="muted">Python + SQL feed ML and GenAI systems, then APIs, retrieval, data stores, containers and cloud make them deployable.</p><div className="tech-pills">{technologies.slice(0,12).map(t=><span key={t}>{t}</span>)}</div></div>
-          <div className="globe" aria-label="Interactive technology globe">
-            <div className="globe-grid"/><div className="globe-glow"/><div className="globe-core">AI / ML</div>
-            <div className="orbit orbit-a"/><div className="orbit orbit-b"/>
-            <div className="tech-orbit">{technologies.map((t,i)=><span key={t} className="tech-node" style={{"--i":i,"--count":technologies.length}}>{t}</span>)}</div>
-          </div>
+          <TechGlobe />
         </div>
       </section>
 
