@@ -184,10 +184,6 @@ function TechGlobe() {
       <div className="globe-glow" />
       <div className="orbit orbit-a" />
       <div className="orbit orbit-b" />
-      <div className="globe-core">
-        <span>AI / ML</span>
-        {active && <small>{active}</small>}
-      </div>
       <div className="tech-orbit">
         {projected.map((tech) => (
           <button
