@@ -11,6 +11,7 @@ const projects = {
     github: "https://github.com/animeshkarmakar7/Document-Verification-AI",
     stack: ["FastAPI","PostgreSQL","MinIO","Kafka","Celery","Tesseract","LangChain","ChromaDB","Sentence-Transformers","Gemini API","BM25","Cosine Similarity","Docker","Streamlit"],
     architecture: ["Upload / OCR ingestion","Kafka event processing","Celery worker pipeline","Chunking + embeddings","BM25 + vector retrieval","RAG synthesis with citations","Clause classification + risk scoring","Streamlit UI over REST APIs"],
+    architectureImage: "/legaldoc-architecture.svg",
     points: ["OCR ingestion with Tesseract for scanned documents","Hybrid retrieval combines BM25 lexical search with cosine vector similarity","Clause classification and legal risk scoring expose structured review signals","MinIO stores document assets while PostgreSQL stores application metadata","Dockerized services separate API, ingestion, workers and supporting infrastructure"],
   },
   "tradeguard-ai": {
@@ -85,6 +86,15 @@ export default async function ProjectDetail({ params }) {
             </div>
           ))}
         </div>
+        {project.architectureImage && (
+          <div className="architecture-image-box">
+            <img
+              src={project.architectureImage}
+              alt={`${project.title} system architecture`}
+              loading="lazy"
+            />
+          </div>
+        )}
       </section>
 
       <section className="detail-section">
