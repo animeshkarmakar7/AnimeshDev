@@ -51,15 +51,11 @@ const techIcons = {
 };
 
 const certifications = [
-  ["Generative AI Fundamentals","AI fundamentals, data-driven applications and prompt engineering."],
-  ["MySQL Certification","SQL, joins, aggregation, subqueries and window functions."],
-  ["AWS Cloud Certification","Cloud fundamentals, EC2, S3, storage and infrastructure."],
-  ["Agentic AI Learning","Agent workflows, tools, orchestration and evaluation."],
-  ["RAG & Semantic Search","Chunking, embeddings, retrieval, reranking and synthesis."],
-  ["Docker & Deployment","Containerization, Compose, API services and cloud deployment."],
-  ["Machine Learning","Supervised learning, feature engineering and model evaluation."],
-  ["Data Engineering","ETL, data ingestion, SQL analytics and data pipelines."],
-  ["Hackathon Builds","GenAI, misinformation detection and healthcare analytics builds."],
+  ["Model Context Protocol: Advanced Topics","Anthropic","https://verify.skilljar.com/c/vhpr927o293w"],
+  ["AI Agents Fundamentals","Hugging Face","https://us.aws.cdn.hf.co/xet-bridge-us/67a47037749ea2c4b9fafd4b/0404e9117bbe54d391f52f605991fb8c936a54b3ff477ec6341b5243497c2002?response-content-disposition=inline%3B+filename%2A%3DUTF-8%27%272026-10-03.png%3B+filename%3D%222026-10-03.png%22%3B&response-content-type=image%2Fpng&xip=wAk6rEDSPlI&user_id=6ac0c4365e0160da316f305c&X-Xet-Cas-Uid=6ac0c4365e0160da316f305c&Expires=1791047071&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy5hd3MuY2RuLmhmLmNvL3hldC1icmlkZ2UtdXMvNjdhNDcwMzc3NDllYTJjNGI5ZmFmZDRiLzA0MDRlOTExN2JiZTU0ZDM5MWY1MmY2MDU5OTFmYjhjOTM2YTU0YjNmZjQ3N2VjNjM0MWI1MjQzNDk3YzIwMDJcXD9yZXNwb25zZS1jb250ZW50LWRpc3Bvc2l0aW9uPWlubGluZSUzQitmaWxlbmFtZSUyQSUzRFVURi04JTI3JTI3MjAyNi0xMC0wMy5wbmclM0IrZmlsZW5hbWUlM0QlMjIyMDI2LTEwLTAzLnBuZyUyMiUzQiZyZXNwb25zZS1jb250ZW50LXR5cGU9aW1hZ2UlMkZwbmcmeGlwPXdBazZyRURTUGxJJnVzZXJfaWQ9NmFjMGM0MzY1ZTAxNjBkYTMxNmYzMDVjJlgtWGV0LUNhcy1VaWQ9NmFjMGM0MzY1ZTAxNjBkYTMxNmYzMDVjIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJFcG9jaFRpbWUiOjE3OTEwNDcwNzF9fX1dfQ__&Signature=MEQCIHyRaApIbpEsTtwbTHSpwzz97ABxw%7EwrBnNlE-B7gUcTAiADgAP8vKWQ5ouqXOVeu4sZ2an%7ELEuvRgZT%7ECGn-riDaA__&Key-Pair-Id=01KXEF4KZ1B6FV465MAWR4M21F&Hash-Algorithm=SHA256"],
+  ["Google Certifications","Coursera","https://www.coursera.org/account/accomplishments/verify/QCB5N1QONAFN"],
+  ["AWS Cloud Certification","Scaler","https://moonshot.scaler.com/s/sl/c964WZbhGK"],
+  ["MySQL Certification","HackerRank","https://www.hackerrank.com/certificates/e1b0c42e9391"],
 ];
 
 const education = [
@@ -319,8 +315,14 @@ export default function Page() {
       </section>
 
       <section id="certifications" className="section">
-        <Reveal><div className="section-label">05 — Certifications</div><div className="cert-header"><h2 className="section-title">Proof of <span>Learning</span></h2><p>3 × 3 grid for certifications, learning tracks and technical credentials.</p></div></Reveal>
-        <div className="cert-grid">{certifications.map(([title,desc],i)=><article className="cert-card reveal" key={title}><span className="cert-index">0{i+1}</span><Award size={19}/><h3>{title}</h3><p>{desc}</p></article>)}</div>
+        <Reveal><div className="section-label">05 — Certifications</div><div className="cert-header"><h2 className="section-title">Proof of <span>Learning</span></h2><p>Verified credentials and learning certificates. Select any card to view the certificate.</p></div></Reveal>
+        <div className="cert-grid">{certifications.map(([title,issuer,url],i)=><article className="cert-card reveal" key={title}>
+          <span className="cert-index">{String(i+1).padStart(2,"0")}</span>
+          <Award size={19}/>
+          <h3>{title}</h3>
+          <p>{issuer}</p>
+          <a className="cert-view" href={url} target="_blank" rel="noreferrer">VIEW CERTIFICATE <ArrowUpRight size={14}/></a>
+        </article>)}</div>
       </section>
 
       <footer className="footer" id="contact">

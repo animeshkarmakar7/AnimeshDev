@@ -101,3 +101,7 @@ a{color:inherit;text-decoration:none}
   .interactive-globe .tech-node img{width:24px;height:24px}
   .interactive-globe .tech-node span{font-size:.5rem}
 }
+
+.cert-view{display:inline-flex;align-items:center;gap:7px;margin-top:22px;padding:10px 12px;border:1px solid rgba(255,255,255,.14);color:#d9d9d9;background:rgba(255,255,255,.025);font:800 .62rem "Courier New",monospace;letter-spacing:.06em;transition:background .2s ease,color .2s ease,border-color .2s ease,transform .2s ease}
+.cert-view:hover{background:#f2f2f2;color:#050505;border-color:#f2f2f2;transform:translateY(-2px)}
+.cert-card h3{margin:34px 0 8px}
