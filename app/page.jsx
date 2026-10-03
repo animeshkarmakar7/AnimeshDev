@@ -240,7 +240,7 @@ export default function Page() {
       </div>
       <div className="landing-stage" aria-hidden="true">
         <div className="landing-character">
-          <img src="/luffy.jpg" alt="" />
+          <img src="/luffy.jpeg" alt="" />
         </div>
       </div>
       <div className="hero-wordmark">
