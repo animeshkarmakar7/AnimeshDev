@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Black hole</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&family=Newsreader:opsz,wght@6..72,700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    --void: #04010f;
+    --violet: #6c3df5;
+    --violet-soft: #a97bff;
+    --text: #ffffff;
+    --text-dim: rgba(255, 255, 255, 0.64);
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+  html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--void);
+    color: var(--text);
+    font-family: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+
+  .hero {
+    position: relative;
+    overflow: hidden;
+    height: 100vh;
+    height: 100svh;
+    min-height: 600px;
+    background: var(--void);
+    border-top: 4px solid var(--violet);
+  }
+  #gl {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: pan-y;
+  }
+  /* shown only if WebGL is unavailable */
+  .hero.no-webgl {
+    background:
+      radial-gradient(ellipse 38% 26% at 50% 74%, rgba(255,255,255,.9), rgba(169,123,255,.55) 40%, transparent 70%),
+      radial-gradient(ellipse 60% 45% at 50% 74%, rgba(108,61,245,.5), transparent 70%),
+      var(--void);
+  }
+
+  .cols {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1.25fr 1fr 1fr 1fr;
+    gap: 28px 24px;
+    padding: 24px clamp(24px, 3.2vw, 48px) 44px;
+  }
+  .brand {
+    font-family: "Newsreader", Georgia, "Times New Roman", serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    margin: 0 0 10px;
+  }
+  .tagline {
+    margin: 0;
+    max-width: 28ch;
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+  h3 { margin: 0 0 14px; font-size: 1.05rem; font-weight: 600; }
+  ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 9px; }
+  a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color .2s ease;
+  }
+  a:hover { color: var(--text); }
+  a:focus-visible { outline: 2px solid var(--violet-soft); outline-offset: 3px; border-radius: 3px; }
+
+  @media (max-width: 760px) {
+    .cols { grid-template-columns: 1fr 1fr; padding-bottom: 32px; }
+    .brand-col { grid-column: 1 / -1; }
+  }
+  @media (prefers-reduced-motion: reduce) { a { transition: none; } }
+</style>
+</head>
+<body>
+
+<main class="hero" id="hero">
+  <canvas id="gl" aria-hidden="true"></canvas>
+
+  <footer class="cols" id="cols">
+    <div class="brand-col">
+      <p class="brand">Abhishek</p>
+      <p class="tagline">Building things with data and a little curiosity.</p>
+    </div>
+    <nav aria-label="Quick links">
+      <h3>Quick Links</h3>
+      <ul>
+        <li><a href="#home">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div>
+      <h3>Get in Touch</h3>
+      <ul>
+        <li><a href="mailto:you@example.com">you@example.com</a></li>
+        <li><a href="tel:+910000000000">+91 00000 00000</a></li>
+        <li><a href="#">Navi Mumbai, India</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3>Connect</h3>
+      <ul>
+        <li><a href="https://github.com/">GitHub</a></li>
+        <li><a href="https://linkedin.com/">LinkedIn</a></li>
+        <li><a href="https://x.com/">X</a></li>
+      </ul>
+    </div>
+  </footer>
+</main>
+
+<!-- ============ Shaders ============ -->
+<script id="vs" type="x-shader/x-vertex">
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+  }
+</script>
+
+<!-- Pass 1: ray-marched Schwarzschild black hole with a thin accretion disk -->
+<script id="fs-scene" type="x-shader/x-fragment">
+  precision highp float;
+  varying vec2 vUv;
+  uniform vec2  uRes;
+  uniform float uTime;
+  uniform float uElev;      // camera elevation above the disk plane (radians)
+  uniform float uHorizon;   // screen y (0..1, from bottom) where the hole is centred
+  uniform float uShadow;    // apparent shadow radius, in units of screen height
+  uniform float uOutScale;
+
+  #define STEPS 300
+  #define CAM_DIST 26.0
+  #define R_IN 3.0
+  #define R_OUT 22.0
+
+  float hash21(vec2 p) {
+    p = fract(p * vec2(123.34, 456.21));
+    p += dot(p, p + 45.32);
+    return fract(p.x * p.y);
+  }
+  float vnoise(vec2 p) {
+    vec2 i = floor(p), f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    float a = hash21(i);
+    float b = hash21(i + vec2(1.0, 0.0));
+    float c = hash21(i + vec2(0.0, 1.0));
+    float d = hash21(i + vec2(1.0, 1.0));
+    return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
+  }
+  float fbm(vec2 p) {
+    float s = 0.0, a = 0.5;
+    for (int i = 0; i < 4; i++) {
+      s += a * vnoise(p);
+      p = p * 2.03 + vec2(17.3, 9.1);
+      a *= 0.5;
+    }
+    return s;
+  }
+
+  // temperature-like ramp: deep violet -> violet -> lilac -> white
+  vec3 ramp(float t) {
+    vec3 c0 = vec3(0.16, 0.05, 0.60);
+    vec3 c1 = vec3(0.42, 0.24, 1.00);
+    vec3 c2 = vec3(0.80, 0.66, 1.00);
+    vec3 c3 = vec3(1.00, 1.00, 1.00);
+    vec3 c = mix(c0, c1, smoothstep(0.00, 0.30, t));
+    c = mix(c, c2, smoothstep(0.28, 0.65, t));
+    c = mix(c, c3, smoothstep(0.60, 1.15, t));
+    return c;
+  }
+
+  void main() {
+    // pixel -> camera ray; the hole sits on the horizon line
+    vec2 p = (vUv - vec2(0.5, uHorizon)) * vec2(uRes.x / uRes.y, 1.0);
+    float s = sin(uElev), c = cos(uElev);
+    vec3 camPos = CAM_DIST * vec3(0.0, s, c);
+    vec3 fwd   = vec3(0.0, -s, -c);
+    vec3 right = vec3(1.0, 0.0, 0.0);
+    vec3 up    = vec3(0.0, c, -s);
+    float k = (2.598 / CAM_DIST) / uShadow;     // 2.598 = shadow radius in Schwarzschild radii
+    vec3 vel = normalize(fwd + (p.x * right + p.y * up) * k);
+    vec3 pos = camPos;
+
+    // conserved angular momentum for the light-bending term
+    vec3 hv = cross(pos, vel);
+    float h2 = dot(hv, hv);
+
+    vec3 col = vec3(0.0);
+    float T = 1.0;
+
+    for (int i = 0; i < STEPS; i++) {
+      float r2 = dot(pos, pos);
+      float r = sqrt(r2);
+      if (r < 1.0) {                                         // fell past the event horizon
+        vec2 pn = p / uShadow;
+        float core = exp(-max(pn.y, 0.0) * 1.1) * (1.0 - 0.7 * smoothstep(0.2, 1.0, length(pn)));
+        col += T * vec3(0.40, 0.20, 1.0) * core * 1.1;       // violet glow filling the shadow
+        T = 0.0;
+        break;
+      }
+      if (r > 45.0 && dot(pos, vel) > 0.0) break;            // escaped to infinity
+
+      float dt = clamp(0.07 * (r - 0.85), 0.025, 1.0);
+      vec3 prev = pos;
+      float r5 = r2 * r2 * r;
+      vel = normalize(vel - 1.5 * h2 * pos / r5 * dt);       // Schwarzschild null geodesic
+      pos += vel * dt;
+
+      // crossing the disk plane (y = 0)?
+      if (prev.y * pos.y < 0.0) {
+        vec3 hit = mix(prev, pos, prev.y / (prev.y - pos.y));
+        float rr = length(hit.xz);
+        if (rr > R_IN && rr < R_OUT) {
+          float ang = atan(hit.z, hit.x);
+          float omega = 2.2 / (rr * sqrt(rr));                // differential (Keplerian) rotation
+          float a = ang - omega * uTime;
+          vec2 np = vec2(rr * 0.9 + 2.0 * cos(a), 2.0 * sin(a));
+          float turb = fbm(np);
+          float fine = fbm(np * 3.1 + 7.0);
+          float bands = 0.93 + 0.07 * sin(rr * 9.0 + turb * 4.0);
+
+          float prof = pow(R_IN / rr, 1.25);
+          float edgeIn  = smoothstep(R_IN, R_IN + 0.5, rr);
+          float edgeOut = 1.0 - smoothstep(9.0, R_OUT, rr);
+          float I = prof * edgeIn * edgeOut * (0.7 + 0.8 * turb) * bands * (0.9 + 0.2 * fine);
+
+          // relativistic Doppler beaming + gravitational redshift
+          float beta = sqrt(1.0 / (2.0 * (rr - 1.0)));
+          vec3 vd = normalize(vec3(-hit.z, 0.0, hit.x)) * beta;
+          float gam = 1.0 / sqrt(1.0 - beta * beta);
+          float D = 1.0 / (gam * (1.0 - dot(vd, -vel)));
+          float g = D * sqrt(1.0 - 1.0 / rr);
+          float boost = pow(g, 1.4);
+
+          col += T * ramp(I * g * 1.1) * I * boost * 5.0;
+          T *= 1.0 - clamp(I * 0.9, 0.0, 0.92);
+        }
+      }
+    }
+
+    gl_FragColor = vec4(col * uOutScale, 1.0);
+  }
+</script>
+
+<!-- Pass 2: copy (with optional bright-pass threshold) -->
+<script id="fs-copy" type="x-shader/x-fragment">
+  precision highp float;
+  varying vec2 vUv;
+  uniform sampler2D tInput;
+  uniform float uThreshold;
+  void main() {
+    vec3 c = texture2D(tInput, vUv).rgb;
+    float l = max(c.r, max(c.g, c.b));
+    c *= max(l - uThreshold, 0.0) / max(l, 1e-4);
+    gl_FragColor = vec4(c, 1.0);
+  }
+</script>
+
+<!-- Pass 3: separable gaussian blur -->
+<script id="fs-blur" type="x-shader/x-fragment">
+  precision highp float;
+  varying vec2 vUv;
+  uniform sampler2D tInput;
+  uniform vec2 uDir;
+  void main() {
+    vec3 c = texture2D(tInput, vUv).rgb * 0.2270270270;
+    c += texture2D(tInput, vUv + uDir * 1.3846153846).rgb * 0.3162162162;
+    c += texture2D(tInput, vUv - uDir * 1.3846153846).rgb * 0.3162162162;
+    c += texture2D(tInput, vUv + uDir * 3.2307692308).rgb * 0.0702702703;
+    c += texture2D(tInput, vUv - uDir * 3.2307692308).rgb * 0.0702702703;
+    gl_FragColor = vec4(c, 1.0);
+  }
+</script>
+
+<!-- Pass 4: bloom composite, glossy-floor reflection, tone map -->
+<script id="fs-final" type="x-shader/x-fragment">
+  precision highp float;
+  varying vec2 vUv;
+  uniform sampler2D tScene;
+  uniform sampler2D tB0;
+  uniform sampler2D tB1;
+  uniform sampler2D tB2;
+  uniform sampler2D tB3;
+  uniform float uHorizon;
+  uniform float uAspect;
+  uniform float uExposure;
+  uniform float uBloom;
+  uniform float uFade;
+  uniform float uInvScale;
+  uniform float uTime;
+
+  float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+
+  vec3 bloomAt(vec2 uv) {
+    return texture2D(tB0, uv).rgb * 0.50
+         + texture2D(tB1, uv).rgb * 0.60
+         + texture2D(tB2, uv).rgb * 0.80
+         + texture2D(tB3, uv).rgb * 1.10;
+  }
+
+  void main() {
+    vec2 uv = vUv;
+    float d = uHorizon - uv.y;           // distance below the horizon
+    vec3 hdr;
+
+    if (d <= 0.0) {
+      hdr = (texture2D(tScene, uv).rgb + bloomAt(uv) * uBloom) * uInvScale;
+    } else {
+      // reflection: mirror around the horizon, smear vertically, fade with depth
+      vec3 acc = vec3(0.0);
+      float wsum = 0.0;
+      for (int k = -3; k <= 3; k++) {
+        float fk = float(k);
+        float w = exp(-fk * fk * 0.18);
+        vec2 m = vec2(uv.x, clamp(uHorizon + d + fk * d * 0.10, 0.0, 1.0));
+        acc += (texture2D(tScene, m).rgb * 0.35 + bloomAt(m) * uBloom) * w;
+        wsum += w;
+      }
+      float fade = exp(-d * 7.5);
+      hdr = acc / wsum * uInvScale * fade * 0.85;
+    }
+
+    // soft violet haze around the hole
+    vec2 q = (uv - vec2(0.5, uHorizon)) * vec2(uAspect, 1.0);
+    q *= vec2(0.8, 1.5);
+    float haze = exp(-dot(q, q) * 6.0);
+    float below = mix(1.0, exp(-max(d, 0.0) * 6.0), step(0.0, d));
+    hdr += vec3(0.30, 0.12, 0.85) * haze * 0.10 * below;
+
+    vec3 c = vec3(1.0) - exp(-hdr * uExposure * uFade);
+    c = pow(c, vec3(0.92));
+    c += (hash(gl_FragCoord.xy + fract(uTime) * 61.0) - 0.5) / 255.0;   // dither: no banding in the glow
+    gl_FragColor = vec4(c, 1.0);
+  }
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+  const hero = document.getElementById('hero');
+  const canvas = document.getElementById('gl');
+  const cols = document.getElementById('cols');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const src = id => document.getElementById(id).textContent;
+
+  if (!window.THREE) { hero.classList.add('no-webgl'); return; }
+
+  let renderer;
+  try {
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: false, powerPreference: 'high-performance' });
+  } catch (e) {
+    hero.classList.add('no-webgl');
+    return;
+  }
+
+  // HDR targets where the GPU allows it, 8-bit (with headroom scaling) otherwise
+  const hdrOK = renderer.capabilities.isWebGL2 &&
+    (renderer.extensions.has('EXT_color_buffer_float') || renderer.extensions.has('EXT_color_buffer_half_float'));
+  const rtType = hdrOK ? THREE.HalfFloatType : THREE.UnsignedByteType;
+  const outScale = hdrOK ? 1.0 : 0.25;
+
+  const vs = src('vs');
+  const mk = (fs, uniforms) => new THREE.ShaderMaterial({
+    vertexShader: vs, fragmentShader: src(fs), uniforms, depthTest: false, depthWrite: false
+  });
+  const makeRT = (w, h) => new THREE.WebGLRenderTarget(w, h, {
+    type: rtType, format: THREE.RGBAFormat,
+    minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter,
+    depthBuffer: false, stencilBuffer: false
+  });
+
+  const sceneUniforms = {
+    uRes: { value: new THREE.Vector2(1, 1) },
+    uTime: { value: 0 },
+    uElev: { value: 0.04 },
+    uHorizon: { value: 0.25 },
+    uShadow: { value: 0.18 },
+    uOutScale: { value: outScale }
+  };
+  const matScene = mk('fs-scene', sceneUniforms);
+  const matCopy  = mk('fs-copy',  { tInput: { value: null }, uThreshold: { value: 0.0 } });
+  const matBlur  = mk('fs-blur',  { tInput: { value: null }, uDir: { value: new THREE.Vector2() } });
+
+  const rtScene = makeRT(4, 4);
+  const levels = [0, 1, 2, 3].map(() => ({ a: makeRT(4, 4), b: makeRT(4, 4), texel: new THREE.Vector2() }));
+
+  const finalUniforms = {
+    tScene: { value: rtScene.texture },
+    tB0: { value: levels[0].a.texture },
+    tB1: { value: levels[1].a.texture },
+    tB2: { value: levels[2].a.texture },
+    tB3: { value: levels[3].a.texture },
+    uHorizon: { value: 0.25 },
+    uAspect: { value: 1.6 },
+    uExposure: { value: 1.25 },
+    uBloom: { value: 0.9 },
+    uFade: { value: 0 },
+    uInvScale: { value: 1.0 / outScale },
+    uTime: { value: 0 }
+  };
+  const matFinal = mk('fs-final', finalUniforms);
+
+  const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), matScene);
+  quad.frustumCulled = false;
+  const scene = new THREE.Scene();
+  scene.add(quad);
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+
+  function pass(mat, target) {
+    quad.material = mat;
+    renderer.setRenderTarget(target);
+    renderer.render(scene, camera);
+  }
+
+  // ---- sizing -------------------------------------------------------------
+  let quality = Math.min(window.devicePixelRatio || 1, 1.5) * 0.85;
+
+  function resize() {
+    const w = hero.clientWidth, h = hero.clientHeight;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setSize(w, h, false);
+
+    const sw = Math.max(64, Math.round(w * quality));
+    const sh = Math.max(64, Math.round(h * quality));
+    rtScene.setSize(sw, sh);
+    levels.forEach((l, i) => {
+      const lw = Math.max(8, sw >> (i + 1)), lh = Math.max(8, sh >> (i + 1));
+      l.a.setSize(lw, lh);
+      l.b.setSize(lw, lh);
+      l.texel.set(1 / lw, 1 / lh);
+    });
+
+    // sit the hole just above the footer columns
+    const horizon = Math.min(0.5, Math.max(0.2, (cols.offsetHeight + 56) / h));
+    const shadow = Math.min(0.2, 0.27 * w / h);
+    sceneUniforms.uRes.value.set(sw, sh);
+    sceneUniforms.uHorizon.value = horizon;
+    sceneUniforms.uShadow.value = shadow;
+    finalUniforms.uHorizon.value = horizon;
+    finalUniforms.uAspect.value = w / h;
+    requestRender();
+  }
+
+  // ---- interaction: move the pointer to tilt the view ---------------------
+  const BASE_EL = 0.04;
+  let el = BASE_EL, targetEl = BASE_EL;
+  window.addEventListener('pointermove', e => {
+    const py = Math.min(1, Math.max(0, e.clientY / window.innerHeight));
+    targetEl = 0.012 + (1 - py) * 0.15;
+    requestRender();
+  }, { passive: true });
+
+  // ---- render -------------------------------------------------------------
+  function render(t, elev) {
+    sceneUniforms.uTime.value = t;
+    finalUniforms.uTime.value = t;
+    sceneUniforms.uElev.value = elev;
+
+    pass(matScene, rtScene);
+
+    matCopy.uniforms.tInput.value = rtScene.texture;
+    matCopy.uniforms.uThreshold.value = 0.6;
+    pass(matCopy, levels[0].a);
+
+    for (let i = 0; i < levels.length; i++) {
+      const l = levels[i];
+      if (i > 0) {
+        matCopy.uniforms.tInput.value = levels[i - 1].a.texture;
+        matCopy.uniforms.uThreshold.value = 0.0;
+        pass(matCopy, l.a);
+      }
+      matBlur.uniforms.tInput.value = l.a.texture;
+      matBlur.uniforms.uDir.value.set(l.texel.x, 0);
+      pass(matBlur, l.b);
+      matBlur.uniforms.tInput.value = l.b.texture;
+      matBlur.uniforms.uDir.value.set(0, l.texel.y);
+      pass(matBlur, l.a);
+    }
+
+    pass(matFinal, null);
+  }
+
+  let pending = false;
+  function requestRender() {
+    if (!reduced || pending) return;
+    pending = true;
+    requestAnimationFrame(() => {
+      pending = false;
+      el += (targetEl - el) * 0.35;
+      finalUniforms.uFade.value = 1;
+      render(4.0, el);
+    });
+  }
+
+  // ---- main loop (one entrance, then idle rotation + tilt) ----------------
+  const start = performance.now();
+  let last = start, frames = 0, acc = 0;
+
+  function frame(now) {
+    requestAnimationFrame(frame);
+    const t = (now - start) / 1000;
+
+    // entrance: camera settles down to the disk plane while the scene fades up
+    const p = Math.min(1, Math.max(0, (t - 0.2) / 3.5));
+    const eased = 1 - Math.pow(1 - p, 3);
+    el += (targetEl - el) * 0.06;
+    finalUniforms.uFade.value = Math.min(1, t / 1.6);
+    render(t, el + (1 - eased) * 0.22);
+
+    // adaptive quality: drop resolution once if the GPU is struggling
+    frames++;
+    if (frames > 30 && frames <= 90) {
+      acc += now - last;
+      if (frames === 90) {
+        if (acc / 60 > 28 && quality > 0.45) { quality *= 0.8; resize(); }
+      }
+    }
+    last = now;
+  }
+
+  new ResizeObserver(resize).observe(hero);
+  resize();
+
+  if (reduced) {
+    finalUniforms.uFade.value = 1;
+    render(4.0, el);
+  } else {
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+</body>
+</html>
