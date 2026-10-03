@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url("https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600&family=Newsreader:opsz,wght@6..72,700&display=swap");
 
 :root {
   --bg:#050505; --panel:rgba(255,255,255,.045); --line:rgba(255,255,255,.12);
@@ -201,14 +200,14 @@ a{color:inherit;text-decoration:none}
 .blackhole-reference-hero #gl{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y}
 .blackhole-reference-hero.no-webgl{background:radial-gradient(ellipse 38% 26% at 50% 74%,rgba(255,255,255,.9),rgba(169,123,255,.55) 40%,transparent 70%),radial-gradient(ellipse 60% 45% at 50% 74%,rgba(108,61,245,.5),transparent 70%),#04010f}
 .blackhole-reference-cols{position:absolute;left:0;right:0;bottom:0;z-index:2;display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;gap:28px 24px;padding:24px clamp(24px,3.2vw,48px) 44px}
-.blackhole-reference-cols .brand{font-family:"Newsreader",Georgia,"Times New Roman",serif;font-weight:700;font-size:1.35rem;margin:0 0 10px}
+.blackhole-reference-cols .brand{font-family:Georgia,"Times New Roman",serif;font-weight:700;font-size:1.35rem;margin:0 0 10px}
 .blackhole-reference-cols .tagline{margin:0;max-width:28ch;color:rgba(255,255,255,.64);font-size:.95rem;line-height:1.5}
 .blackhole-reference-cols h3{margin:0 0 14px;font-size:1.05rem;font-weight:600;color:#fff;letter-spacing:0}
 .blackhole-reference-cols ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
 .blackhole-reference-cols a{color:rgba(255,255,255,.64);text-decoration:none;font-size:.95rem;transition:color .2s ease}
 .blackhole-reference-cols a:hover{color:#fff}
 .blackhole-reference-cols a:focus-visible{outline:2px solid #a97bff;outline-offset:3px;border-radius:3px}
-.blackhole-reference-contact{font-family:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif}
+.blackhole-reference-contact{font-family:system-ui,-apple-system,"Segoe UI",sans-serif}
 @media (max-width:760px){
   .blackhole-reference-cols{grid-template-columns:1fr 1fr;padding-bottom:32px}
   .blackhole-reference-cols .brand-col{grid-column:1/-1}
