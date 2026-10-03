@@ -242,7 +242,7 @@ export default function Page() {
       </div>
       <div className="landing-stage" aria-hidden="true">
         <div className="landing-character">
-          <img src="/luffy.jpeg" alt="" />
+          <img src="/luffy.jpg" alt="" />
         </div>
       </div>
       <div className="hero-wordmark">
@@ -282,7 +282,7 @@ export default function Page() {
           <div className="section-label">02 — Projects</div>
           <div className="projects-header">
             <h2 className="section-title">Selected <span>Work</span></h2>
-            <p>Four systems across GenAI, ML, data engineering and production AI. Click a card to open the project repository.</p>
+            <p>Scroll through each build. The project details stay anchored while the visual panel changes with the active project. The visual box is ready for your screenshots.</p>
           </div>
         </Reveal>
         <ProjectShowcase />
