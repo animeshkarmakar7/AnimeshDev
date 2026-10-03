@@ -464,3 +464,37 @@ body{
 .blackhole-reference-cols a:hover{color:#c0adff}
 .nav-brand,.hero-nav,.nav-links a{color:#f5f3ff}
 ::selection{background:rgba(123,77,255,.35);color:#fff}
+
+/* Smooth project-to-project motion */
+.project-sticky-copy{position:relative}
+.project-smooth-panel{
+  animation:projectPanelEnter .65s cubic-bezier(.2,.78,.2,1);
+  will-change:opacity,transform,filter;
+}
+.project-smooth-panel h3,
+.project-smooth-panel .project-showcase-description,
+.project-smooth-panel .project-github-link,
+.project-smooth-panel .project-stack-block{
+  animation:projectContentEnter .7s cubic-bezier(.2,.8,.2,1) both;
+}
+.project-smooth-panel h3{animation-delay:.03s}
+.project-smooth-panel .project-showcase-description{animation-delay:.08s}
+.project-smooth-panel .project-github-link{animation-delay:.13s}
+.project-smooth-panel .project-stack-block{animation-delay:.18s}
+@keyframes projectPanelEnter{
+  from{opacity:0;transform:translate3d(0,22px,0);filter:blur(5px)}
+  to{opacity:1;transform:none;filter:blur(0)}
+}
+@keyframes projectContentEnter{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:none}
+}
+.project-visual-slot{
+  transition:opacity .35s ease,transform .55s cubic-bezier(.2,.8,.2,1),border-color .25s ease;
+}
+.project-scroll-step{scroll-snap-align:center}
+@media (prefers-reduced-motion:reduce){
+  .project-smooth-panel,.project-smooth-panel h3,.project-smooth-panel .project-showcase-description,.project-smooth-panel .project-github-link,.project-smooth-panel .project-stack-block{
+    animation:none!important;
+  }
+}
