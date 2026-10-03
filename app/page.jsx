@@ -36,7 +36,7 @@ const techIcons = {
   TensorFlow:"https://cdn.simpleicons.org/tensorflow",
   LangChain:"https://cdn.simpleicons.org/langchain",
   LangGraph:"https://cdn.simpleicons.org/langgraph",
-  RAG:"https://cdn.simpleicons.org/openai",
+  RAG:"public/Rag--Streamline-Carbon.svg",
   Gemini:"https://cdn.simpleicons.org/googlegemini",
   FastAPI:"https://cdn.simpleicons.org/fastapi",
   Flask:"https://cdn.simpleicons.org/flask",
