@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import ProjectShowcase from "../components/ProjectShowcase";
+import BlackHoleContact from "../components/BlackHoleContact";
 import {
   ArrowUpRight,
   Award,
@@ -283,19 +285,7 @@ export default function Page() {
             <p>Four systems across GenAI, ML, data engineering and production AI. Click a card to open the project repository.</p>
           </div>
         </Reveal>
-        <div className="project-grid">
-          {projects.map((project,i)=>{ const Icon=project.icon; return (
-            <a key={project.title} className="project-card reveal" href={"/projects/"+project.slug}>
-              <span className="project-number">0{i+1}</span>
-              <div className="project-top"><div className="project-icon"><Icon size={20}/></div><ArrowUpRight size={20}/></div>
-              <div className="project-body">
-                <p className="project-kicker">{project.tags.slice(0,2).join(" / ")}</p>
-                <h3>{project.title}</h3><p>{project.subtitle}</p><p className="project-desc">{project.description}</p>
-              </div>
-              <div className="card-tags">{project.tags.map(t=><span key={t}>{t}</span>)}</div>
-            </a>
-          )})}
-        </div>
+        <ProjectShowcase />
       </section>
 
       <section id="stack" className="section">
@@ -325,18 +315,7 @@ export default function Page() {
         </article>)}</div>
       </section>
 
-      <footer className="footer" id="contact">
-        <div className="section-label">06 — Contact</div>
-        <p className="footer-name">ANIMESH KARMAKAR</p>
-        <p className="footer-role">AI ENGINEER · ML · GENAI · RAG · AGENTS</p>
-        <div className="footer-links">
-          <a href="https://github.com/animeshkarmakar7" target="_blank" rel="noreferrer"><Code2 size={16}/>GitHub</a>
-          <a href="https://linkedin.com/in/animeshkarmakar" target="_blank" rel="noreferrer"><Server size={16}/>LinkedIn</a>
-          <a href="mailto:animeshkarmakar710@gmail.com"><Sparkles size={16}/>Email</a>
-          <a href="/animesh_karmakar_resume.pdf" download><Container size={16}/>Resume</a>
-        </div>
-        <div className="footer-meta"><span>AI &amp; Data Science</span><span>2026</span></div>
-      </footer>
+      <BlackHoleContact />
     </main>
   </>;
 }
