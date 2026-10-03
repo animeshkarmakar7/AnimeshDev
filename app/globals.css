@@ -296,3 +296,171 @@ a{color:inherit;text-decoration:none}
 .blackhole-reference-contact .contact-ui-divider{
   background:rgba(255,255,255,.12);
 }
+
+/* Violet + black visual system */
+:root{
+  --bg:#050309;
+  --bg-deep:#030207;
+  --panel:rgba(91,52,180,.09);
+  --panel-strong:rgba(108,61,245,.15);
+  --line:rgba(151,112,255,.22);
+  --line-bright:rgba(179,145,255,.42);
+  --text:#f5f3ff;
+  --muted:#aaa0bf;
+  --accent:#7b4dff;
+  --accent-soft:#b08cff;
+  --violet-glow:rgba(123,77,255,.28);
+}
+html{background:radial-gradient(circle at 50% -20%,rgba(123,77,255,.16),transparent 34%),#050309}
+body{
+  background:
+    radial-gradient(circle at 50% 0%,rgba(123,77,255,.11),transparent 28%),
+    radial-gradient(circle at 15% 45%,rgba(77,42,156,.08),transparent 25%),
+    linear-gradient(180deg,#050309 0%,#08050f 55%,#030207 100%);
+  color:var(--text)
+}
+.content-shell{background:linear-gradient(180deg,#050309 0%,#08050f 52%,#030207 100%)}
+.section{position:relative}
+.section::before{
+  content:"";
+  position:absolute;
+  top:0;left:10%;right:10%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--line),transparent);
+  opacity:.7
+}
+.section-label{color:#8f79b6}
+.section-title span{color:#775ca9}
+.projects-header p,.stack-header p,.edu-header p,.cert-header p{color:#948aa5}
+.about-text,.muted{color:#b1a7c1}
+.about-metrics span,
+.project-card,
+.cert-card,
+.project-visual-slot,
+.detail-tags span,
+.detail-points>div,
+.architecture-card{
+  border-color:var(--line);
+  background:
+    linear-gradient(145deg,rgba(123,77,255,.07),rgba(255,255,255,.018)),
+    rgba(5,3,10,.82);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.025)
+}
+.about-metrics span:hover,
+.project-card:hover,
+.cert-card:hover,
+.architecture-card:hover{
+  border-color:var(--line-bright);
+  background:
+    linear-gradient(145deg,rgba(123,77,255,.12),rgba(255,255,255,.025)),
+    rgba(6,3,12,.92);
+  box-shadow:0 18px 50px rgba(50,18,120,.12),inset 0 1px 0 rgba(255,255,255,.035)
+}
+.project-icon{
+  border-color:var(--line);
+  background:rgba(123,77,255,.08)
+}
+.card-tags span,.tech-pills span,.project-stack-pills span{
+  border-color:rgba(151,112,255,.25);
+  background:rgba(91,52,180,.08);
+  color:#c5bdd5
+}
+.card-tags span:hover,.tech-pills span:hover,.project-stack-pills span:hover{
+  border-color:var(--line-bright);
+  background:rgba(123,77,255,.14);
+  color:#fff;
+  box-shadow:0 0 20px rgba(123,77,255,.1)
+}
+.tech-pills span,.project-stack-pills span{border-radius:999px}
+.scroll-meter{background:rgba(151,112,255,.18)}
+.scroll-meter span{background:linear-gradient(180deg,#fff,#a67cff,#6f45e8);box-shadow:0 0 12px rgba(123,77,255,.65)}
+.education-line{background:linear-gradient(90deg,transparent,#6848a4,transparent)}
+.education-dot{
+  border-color:rgba(151,112,255,.4);
+  background:#07040d;
+  box-shadow:0 0 20px rgba(123,77,255,.12)
+}
+.cert-view,.project-github-link{
+  border-color:rgba(151,112,255,.28);
+  background:rgba(91,52,180,.08)
+}
+.cert-view:hover,.project-github-link:hover{
+  background:#a88cff;
+  color:#09040f;
+  border-color:#b9a1ff;
+  box-shadow:0 0 25px rgba(123,77,255,.24)
+}
+.detail-page{
+  background:
+    radial-gradient(circle at 75% 5%,rgba(123,77,255,.13),transparent 25%),
+    radial-gradient(circle at 20% 70%,rgba(91,52,180,.08),transparent 28%),
+    #050309
+}
+.detail-nav{
+  border-bottom-color:rgba(151,112,255,.2);
+  background:rgba(5,3,9,.84);
+  box-shadow:0 10px 40px rgba(30,10,80,.12)
+}
+.detail-section{border-top-color:rgba(151,112,255,.18)}
+.detail-cta{
+  border-color:rgba(151,112,255,.22);
+  background:linear-gradient(135deg,rgba(123,77,255,.11),rgba(255,255,255,.02))
+}
+.detail-cta a{
+  background:#a88cff;
+  color:#08040d
+}
+.detail-cta a:hover{background:#c1adff}
+.globe{
+  border-color:rgba(151,112,255,.32);
+  background:
+    radial-gradient(circle at 32% 28%,rgba(197,173,255,.16),transparent 18%),
+    radial-gradient(circle at 50% 60%,rgba(123,77,255,.12),transparent 60%),
+    #08050f;
+  box-shadow:
+    inset -90px -70px 140px rgba(0,0,0,.8),
+    inset 35px 25px 70px rgba(177,140,255,.08),
+    0 0 90px rgba(94,46,205,.16)
+}
+.globe::before,.globe::after{border-color:rgba(159,123,245,.12)}
+.globe-grid{
+  background:
+    repeating-linear-gradient(0deg,transparent 0 27px,rgba(151,112,255,.07) 28px 29px,transparent 30px 48px),
+    repeating-linear-gradient(90deg,transparent 0 34px,rgba(151,112,255,.055) 35px 36px,transparent 37px 58px)
+}
+.orbit{border-color:rgba(151,112,255,.1)}
+.interactive-globe .tech-node{
+  border-color:rgba(151,112,255,.22);
+  background:rgba(8,4,16,.9);
+  box-shadow:0 8px 30px rgba(31,8,76,.52)
+}
+.interactive-globe .tech-node:hover,.interactive-globe .tech-node.is-active{
+  background:#b49aff;
+  color:#0b0612;
+  border-color:#d0c1ff;
+  box-shadow:0 0 32px rgba(123,77,255,.45)
+}
+.interactive-globe .tech-node span{
+  border-color:rgba(151,112,255,.2);
+  background:#0a0514;
+  color:#ddd3ef
+}
+.footer,.contact-blackhole{
+  border-top-color:rgba(151,112,255,.18)
+}
+.blackhole-reference-contact{
+  background:
+    radial-gradient(circle at 50% 40%,rgba(123,77,255,.07),transparent 30%),
+    #050309;
+}
+.blackhole-reference-cols{
+  background:linear-gradient(
+    to top,
+    rgba(5,3,9,.99) 0%,
+    rgba(5,3,9,.96) 30%,
+    rgba(5,3,9,.78) 56%,
+    rgba(5,3,9,0) 100%
+  );
+}
+.blackhole-reference-cols a:hover{color:#c0adff}
+.nav-brand,.hero-nav,.nav-links a{color:#f5f3ff}
+::selection{background:rgba(123,77,255,.35);color:#fff}
