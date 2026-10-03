@@ -70,7 +70,7 @@ export default async function ProjectDetail({ params }) {
       </section>
 
       <section className="detail-section">
-        <div className="detail-label">01 — TECHNOLOGY</div>
+        <div className="detail-label">01 — TECH STACK</div>
         <div className="detail-tags">{project.stack.map((tech) => <span key={tech}>{tech}</span>)}</div>
       </section>
 
