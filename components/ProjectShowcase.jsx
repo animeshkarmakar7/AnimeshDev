@@ -63,11 +63,15 @@ function VisualSlot({ project, active }) {
           <span>{project.number} / {project.accent}</span>
           <ArrowUpRight size={18} />
         </div>
-        <div>
-          <span className="visual-slot-label">PROJECT IMAGE</span>
-          <strong>IMAGE SLOT</strong>
-          <small>Add project screenshot / cover here</small>
-        </div>
+        {project.image ? (
+          <img className="project-visual-image" src={project.image} alt={`${project.title} project preview`} />
+        ) : (
+          <div className="visual-placeholder">
+            <span className="visual-slot-label">PROJECT IMAGE</span>
+            <strong>IMAGE SLOT</strong>
+            <small>Add project screenshot / cover here</small>
+          </div>
+        )}
       </div>
     </a>
   );
@@ -116,7 +120,7 @@ export default function ProjectShowcase() {
         </div>
 
         <div className="project-sticky-visual">
-          <VisualSlot project={project} active={true} />
+          <VisualSlot key={project.slug} project={project} active={true} />
           <div className="project-visual-progress">
             {projects.map((item, index) => (
               <button
