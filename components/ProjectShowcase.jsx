@@ -13,6 +13,7 @@ const projects = [
     stack: ["FastAPI","PostgreSQL","MinIO","Kafka","Celery","Tesseract","LangChain","ChromaDB","Sentence-Transformers","Gemini API","BM25","Docker","Streamlit"],
     github: "https://github.com/animeshkarmakar7/Document-Verification-AI",
     accent: "LEGAL / RAG",
+    image: "/legaldoc.avif",
   },
   {
     slug: "tradeguard-ai",
@@ -33,6 +34,7 @@ const projects = [
     stack: ["Python","Pandas","NumPy","Scikit-learn","XGBoost","Random Forest","ARIMA","Flask","MongoDB","Docker","AWS EC2"],
     github: "https://github.com/animeshkarmakar7/Sangrahak-AI-powered-Inventory-Management-system",
     accent: "FORECAST / RISK",
+    image: "/sangrahak.avif",
   },
   {
     slug: "saas-churn",
