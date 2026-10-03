@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { Github, Linkedin, Mail, ArrowUpRight } from "lucide-react";
+import { Github, Linkedin, Mail } from "lucide-react";
 
 const VERTEX = `
 varying vec2 vUv;
@@ -531,11 +531,6 @@ export default function BlackHoleContact() {
         </footer>
       </div>
 
-      <div className="blackhole-bottom">
-        <span>AI &amp; DATA SCIENCE / AI ENGINEER</span>
-        <span>2026</span>
-        <a href="#home">BACK TO TOP <ArrowUpRight size={13}/></a>
-      </div>
     </section>
   );
 }
