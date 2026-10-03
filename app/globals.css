@@ -213,3 +213,46 @@ a{color:inherit;text-decoration:none}
   .blackhole-reference-cols .brand-col{grid-column:1/-1}
 }
 @media (prefers-reduced-motion:reduce){.blackhole-reference-cols a{transition:none}}
+
+/* Final black-hole contact framing */
+.blackhole-reference-contact{
+  --blackhole-void:#04010f;
+  --blackhole-violet:#6c3df5;
+  --blackhole-soft:#a97bff;
+  background:
+    radial-gradient(circle at 50% 42%,rgba(108,61,245,.05),transparent 28%),
+    var(--blackhole-void);
+  border-top:1px solid rgba(108,61,245,.28);
+  box-shadow:inset 0 20px 80px rgba(108,61,245,.045),inset 0 -40px 100px rgba(108,61,245,.05);
+}
+.blackhole-reference-hero{border-top:3px solid var(--blackhole-violet)}
+.blackhole-reference-cols{
+  background:linear-gradient(
+    to top,
+    rgba(4,1,15,.98) 0%,
+    rgba(4,1,15,.94) 28%,
+    rgba(4,1,15,.74) 54%,
+    rgba(4,1,15,0) 100%
+  );
+  padding-top:90px;
+}
+.blackhole-reference-cols>div,
+.blackhole-reference-cols>nav{min-width:0}
+.blackhole-reference-cols .brand,
+.blackhole-reference-cols h3{color:#fff}
+.blackhole-reference-cols .tagline,
+.blackhole-reference-cols a,
+.blackhole-reference-cols span{overflow-wrap:anywhere}
+.blackhole-reference-cols li{min-width:0}
+.blackhole-reference-cols li>a,
+.blackhole-reference-cols li>span{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+.blackhole-reference-cols .brand-col{padding-right:15%}
+.blackhole-reference-contact .noise{display:none}
+@media (max-width:760px){
+  .blackhole-reference-cols{padding-top:120px}
+  .blackhole-reference-cols .brand-col{padding-right:0}
+}
