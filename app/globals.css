@@ -536,3 +536,13 @@ body{
   height:auto;
   object-fit:cover;
 }
+
+
+/* Violet tint on the ANIMESH hero wordmark */
+.hero-wordmark h1 .hero-first-name{
+  background:linear-gradient(100deg,#f5f3ff 0%,#f5f3ff 42%,#b08cff 72%,#7b4dff 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+}
