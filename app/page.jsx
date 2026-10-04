@@ -292,7 +292,7 @@ export default function Page() {
       <section id="stack" className="section">
         <Reveal>
           <div className="section-label">03 — Tech Stack</div>
-          <div className="stack-header"><h2 className="section-title">Orbital <span>Stack</span></h2><p>Interactive globe-style system map. The stack rotates continuously and each technology is a live node.</p></div>
+          <div className="stack-header"><h2 className="section-title">Orbital <span>Stack</span></h2></div>
         </Reveal>
         <div className="globe-layout reveal">
           <div className="stack-copy"><p className="big-copy">Code at the core.<br/>Infrastructure around it.</p><p className="muted">Python + SQL feed ML and GenAI systems, then APIs, retrieval, data stores, containers and cloud make them deployable.</p><div className="tech-pills">{technologies.slice(0,12).map(t=><span key={t}>{t}</span>)}</div></div>
