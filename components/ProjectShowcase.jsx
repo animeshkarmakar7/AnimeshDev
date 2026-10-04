@@ -13,7 +13,7 @@ const projects = [
     stack: ["FastAPI","PostgreSQL","MinIO","Kafka","Celery","Tesseract","LangChain","ChromaDB","Sentence-Transformers","Gemini API","BM25","Docker","Streamlit"],
     github: "https://github.com/animeshkarmakar7/Document-Verification-AI",
     accent: "LEGAL / RAG",
-    image: "/legaldoc.svg",
+    image: "/legaldoc-cover.webp",
   },
   {
     slug: "tradeguard-ai",
