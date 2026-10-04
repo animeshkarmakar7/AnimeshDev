@@ -247,7 +247,7 @@ export default function Page() {
       </div>
       <div className="hero-wordmark">
         <h1 style={{transform:"translateY(var(--word-y)) scale(var(--word-scale))",opacity:"var(--word-opacity)"}}>
-          <span>ANIMESH</span>
+          <span className="hero-first-name">ANIMESH</span>
           <span>KARMAKAR</span>
         </h1>
       </div>
