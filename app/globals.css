@@ -546,3 +546,13 @@ body{
   -webkit-text-fill-color:transparent;
   color:transparent;
 }
+
+
+/* Subtle violet tint at the start of KARMAKAR */
+.hero-wordmark h1 .hero-last-name{
+  background:linear-gradient(90deg,#9b72ff 0%,#d9ccff 10%,#f2f2f2 25%,#f2f2f2 100%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+}
