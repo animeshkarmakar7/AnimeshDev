@@ -248,7 +248,7 @@ export default function Page() {
       <div className="hero-wordmark">
         <h1 style={{transform:"translateY(var(--word-y)) scale(var(--word-scale))",opacity:"var(--word-opacity)"}}>
           <span className="hero-first-name">ANIMESH</span>
-          <span>KARMAKAR</span>
+          <span className="hero-last-name">KARMAKAR</span>
         </h1>
       </div>
       <div className="scroll-meter"><span style={{transform:"scaleY(var(--progress))"}}/></div>
