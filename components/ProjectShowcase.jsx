@@ -35,7 +35,6 @@ const projects = [
     stack: ["Python","Pandas","NumPy","Scikit-learn","XGBoost","Random Forest","ARIMA","Flask","MongoDB","Docker","AWS EC2"],
     github: "https://github.com/animeshkarmakar7/Sangrahak-AI-powered-Inventory-Management-system",
     accent: "FORECAST / RISK",
-    image: "/sangrahak.svg",
     image: "/Sangrahak AI Inventory Dashboard.png",
   },
   {
@@ -84,29 +83,71 @@ function VisualSlot({ project, active }) {
 
 export default function ProjectShowcase() {
   const [active, setActive] = useState(0);
-  const sectionRefs = useRef([]);
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    const observers = sectionRefs.current
-      .filter(Boolean)
-      .map((el, index) => {
-        const observer = new IntersectionObserver(
-          ([entry]) => {
-            if (entry.isIntersecting) setActive(index);
-          },
-          { rootMargin: "-35% 0px -50% 0px", threshold: 0 }
-        );
-        observer.observe(el);
-        return observer;
-      });
+    let ticking = false;
 
-    return () => observers.forEach((observer) => observer.disconnect());
+    const calculateActiveIndex = () => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      
+      // Calculate how far we've scrolled inside the container
+      const totalScrollableDistance = rect.height - viewportHeight;
+      if (totalScrollableDistance <= 0) return;
+
+      // When the top of container enters viewport, calculate progress from 0 to 1
+      const progress = Math.max(0, Math.min(1, -rect.top / totalScrollableDistance));
+      
+      // Compute index with generous thresholds so transitions feel natural and graceful
+      const rawIndex = progress * projects.length;
+      const newIndex = Math.min(projects.length - 1, Math.floor(rawIndex));
+      
+      setActive((prev) => (prev !== newIndex ? newIndex : prev));
+    };
+
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          calculateActiveIndex();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll, { passive: true });
+    calculateActiveIndex();
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleScroll);
+    };
   }, []);
+
+  const scrollToProject = (index) => {
+    const container = containerRef.current;
+    if (!container) return;
+    const rect = container.getBoundingClientRect();
+    const scrollTop = window.scrollY || window.pageYOffset;
+    const totalScrollableDistance = container.offsetHeight - window.innerHeight;
+    const targetOffset = scrollTop + rect.top + (index / (projects.length - 1 || 1)) * totalScrollableDistance;
+
+    if (window.__lenis) {
+      window.__lenis.scrollTo(targetOffset, { duration: 1.2 });
+    } else {
+      window.scrollTo({ top: targetOffset, behavior: "smooth" });
+    }
+  };
 
   const project = projects[active];
 
   return (
-    <div className="project-showcase">
+    <div className="project-showcase" ref={containerRef}>
       <div className="project-sticky">
         <div className="project-sticky-copy">
           <div key={project.slug} className="project-smooth-panel">
@@ -127,7 +168,27 @@ export default function ProjectShowcase() {
         </div>
 
         <div className="project-sticky-visual">
-          <VisualSlot key={project.slug} project={project} active={true} />
+          <div className="project-visual-stack">
+            {projects.map((item, idx) => (
+              <div
+                key={item.slug}
+                className={`project-visual-item ${idx === active ? "active" : ""}`}
+                style={{
+                  opacity: idx === active ? 1 : 0,
+                  transform: idx === active ? "translate3d(0, 0, 0) scale(1)" : "translate3d(0, 20px, 0) scale(0.96)",
+                  pointerEvents: idx === active ? "auto" : "none",
+                  transition: "opacity 0.65s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1)",
+                  position: idx === 0 ? "relative" : "absolute",
+                  inset: 0,
+                  width: "100%",
+                  height: "100%"
+                }}
+              >
+                <VisualSlot project={item} active={idx === active} />
+              </div>
+            ))}
+          </div>
+
           <div className="project-visual-progress">
             {projects.map((item, index) => (
               <button
@@ -135,23 +196,13 @@ export default function ProjectShowcase() {
                 type="button"
                 className={index === active ? "active" : ""}
                 aria-label={`Show ${item.title}`}
-                onClick={() => sectionRefs.current[index]?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                onClick={() => scrollToProject(index)}
               >
                 <span>{item.number}</span>
               </button>
             ))}
           </div>
         </div>
-      </div>
-
-      <div className="project-scroll-track" aria-hidden="true">
-        {projects.map((item, index) => (
-          <div
-            className="project-scroll-step"
-            key={item.slug}
-            ref={(node) => { sectionRefs.current[index] = node; }}
-          />
-        ))}
       </div>
     </div>
   );
