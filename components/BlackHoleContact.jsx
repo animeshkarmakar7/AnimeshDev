@@ -11,10 +11,11 @@ void main() {
 }
 `;
 
+// Pass 1: ray-marched Schwarzschild black hole with a thin accretion disk
 const SCENE = `
 precision highp float;
 varying vec2 vUv;
-uniform vec2 uRes;
+uniform vec2  uRes;
 uniform float uTime;
 uniform float uElev;
 uniform float uHorizon;
@@ -49,6 +50,8 @@ float fbm(vec2 p) {
   }
   return s;
 }
+
+// temperature-like ramp: deep violet -> violet -> lilac -> white
 vec3 ramp(float t) {
   vec3 c0 = vec3(0.16, 0.05, 0.60);
   vec3 c1 = vec3(0.42, 0.24, 1.00);
@@ -59,18 +62,23 @@ vec3 ramp(float t) {
   c = mix(c, c3, smoothstep(0.60, 1.15, t));
   return c;
 }
+
 void main() {
+  // pixel -> camera ray; the hole sits on the horizon line
   vec2 p = (vUv - vec2(0.5, uHorizon)) * vec2(uRes.x / uRes.y, 1.0);
   float s = sin(uElev), c = cos(uElev);
   vec3 camPos = CAM_DIST * vec3(0.0, s, c);
-  vec3 fwd = vec3(0.0, -s, -c);
+  vec3 fwd   = vec3(0.0, -s, -c);
   vec3 right = vec3(1.0, 0.0, 0.0);
-  vec3 up = vec3(0.0, c, -s);
+  vec3 up    = vec3(0.0, c, -s);
   float k = (2.598 / CAM_DIST) / uShadow;
   vec3 vel = normalize(fwd + (p.x * right + p.y * up) * k);
   vec3 pos = camPos;
+
+  // conserved angular momentum for the light-bending term
   vec3 hv = cross(pos, vel);
   float h2 = dot(hv, hv);
+
   vec3 col = vec3(0.0);
   float T = 1.0;
 
@@ -92,32 +100,37 @@ void main() {
     vel = normalize(vel - 1.5 * h2 * pos / r5 * dt);
     pos += vel * dt;
 
+    // crossing the disk plane (y = 0)?
     if (prev.y * pos.y < 0.0) {
       vec3 hit = mix(prev, pos, prev.y / (prev.y - pos.y));
       float rr = length(hit.xz);
       if (rr > R_IN && rr < R_OUT) {
         float ang = atan(hit.z, hit.x);
-        float omega = 2.2 / (rr * sqrt(rr));
+        float omega = 3.6 / (rr * sqrt(rr));   // smooth rapid Keplerian differential rotation
         float a = ang - omega * uTime;
-        vec2 np = vec2(rr * 0.9 + 2.0 * cos(a), 2.0 * sin(a));
-        float turb = fbm(np);
-        float fine = fbm(np * 3.1 + 7.0);
-        float bands = 0.93 + 0.07 * sin(rr * 9.0 + turb * 4.0);
+        // Dual-swirl dynamic plasma streams
+        vec2 np1 = vec2(rr * 0.85 + 2.5 * cos(a), 2.5 * sin(a));
+        vec2 np2 = vec2(rr * 1.2 + 1.8 * cos(a * 1.5 - uTime * 0.4), 1.8 * sin(a * 1.5 - uTime * 0.4));
+        float turb = fbm(np1);
+        float fine = fbm(np2 * 2.2 + vec2(11.0, 4.0));
+        float spirals = 0.88 + 0.12 * sin(ang * 3.0 - omega * uTime * 1.8 + rr * 2.5);
+        float bands = 0.88 + 0.12 * sin(rr * 8.5 + turb * 4.5);
 
-        float prof = pow(R_IN / rr, 1.25);
-        float edgeIn = smoothstep(R_IN, R_IN + 0.5, rr);
-        float edgeOut = 1.0 - smoothstep(9.0, R_OUT, rr);
-        float I = prof * edgeIn * edgeOut * (0.7 + 0.8 * turb) * bands * (0.9 + 0.2 * fine);
+        float prof = pow(R_IN / rr, 1.35);
+        float edgeIn  = smoothstep(R_IN, R_IN + 0.35, rr);
+        float edgeOut = 1.0 - smoothstep(12.0, R_OUT, rr);
+        float I = prof * edgeIn * edgeOut * (0.65 + 0.85 * turb) * bands * spirals * (0.85 + 0.35 * fine);
 
+        // relativistic Doppler beaming + gravitational redshift
         float beta = sqrt(1.0 / (2.0 * (rr - 1.0)));
         vec3 vd = normalize(vec3(-hit.z, 0.0, hit.x)) * beta;
         float gam = 1.0 / sqrt(1.0 - beta * beta);
         float D = 1.0 / (gam * (1.0 - dot(vd, -vel)));
         float g = D * sqrt(1.0 - 1.0 / rr);
-        float boost = pow(g, 1.4);
+        float boost = pow(g, 1.55);
 
-        col += T * ramp(I * g * 1.1) * I * boost * 5.0;
-        T *= 1.0 - clamp(I * 0.9, 0.0, 0.92);
+        col += T * ramp(I * g * 1.2) * I * boost * 6.5;
+        T *= 1.0 - clamp(I * 0.88, 0.0, 0.92);
       }
     }
   }
@@ -126,6 +139,7 @@ void main() {
 }
 `;
 
+// Pass 2: copy (with optional bright-pass threshold)
 const COPY = `
 precision highp float;
 varying vec2 vUv;
@@ -139,6 +153,7 @@ void main() {
 }
 `;
 
+// Pass 3: separable gaussian blur
 const BLUR = `
 precision highp float;
 varying vec2 vUv;
@@ -154,6 +169,7 @@ void main() {
 }
 `;
 
+// Pass 4: bloom composite, glossy-floor reflection, tone map
 const FINAL = `
 precision highp float;
 varying vec2 vUv;
@@ -171,12 +187,14 @@ uniform float uInvScale;
 uniform float uTime;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+
 vec3 bloomAt(vec2 uv) {
   return texture2D(tB0, uv).rgb * 0.50
        + texture2D(tB1, uv).rgb * 0.60
        + texture2D(tB2, uv).rgb * 0.80
        + texture2D(tB3, uv).rgb * 1.10;
 }
+
 void main() {
   vec2 uv = vUv;
   float d = uHorizon - uv.y;
@@ -185,6 +203,7 @@ void main() {
   if (d <= 0.0) {
     hdr = (texture2D(tScene, uv).rgb + bloomAt(uv) * uBloom) * uInvScale;
   } else {
+    // reflection: mirror around the horizon, smear vertically, fade with depth
     vec3 acc = vec3(0.0);
     float wsum = 0.0;
     for (int k = -3; k <= 3; k++) {
@@ -198,20 +217,12 @@ void main() {
     hdr = acc / wsum * uInvScale * fade * 0.85;
   }
 
+  // soft violet haze around the hole
   vec2 q = (uv - vec2(0.5, uHorizon)) * vec2(uAspect, 1.0);
   q *= vec2(0.8, 1.5);
   float haze = exp(-dot(q, q) * 6.0);
   float below = mix(1.0, exp(-max(d, 0.0) * 6.0), step(0.0, d));
   hdr += vec3(0.30, 0.12, 0.85) * haze * 0.10 * below;
-
-  // Animated violet lighting sweeps across the black-hole environment.
-  float sweepX = sin(uTime * 0.42) * 1.55;
-  float sweep = exp(-pow(q.x - sweepX, 2.0) * 3.2 - pow(q.y + sin(uTime * 0.55) * 0.08, 2.0) * 16.0);
-  float sweep2 = exp(-pow(q.x + cos(uTime * 0.27) * 1.15, 2.0) * 4.8 - pow(q.y - 0.08, 2.0) * 28.0);
-  float pulse = 0.82 + 0.18 * sin(uTime * 1.35);
-
-  hdr += vec3(0.30, 0.10, 1.0) * sweep * 0.14 * pulse;
-  hdr += vec3(0.62, 0.34, 1.0) * sweep2 * 0.09 * pulse;
 
   vec3 c = vec3(1.0) - exp(-hdr * uExposure * uFade);
   c = pow(c, vec3(0.92));
@@ -257,7 +268,6 @@ function BlackHoleCanvas() {
 
       const canvas = canvasRef.current;
       const hero = canvas.parentElement;
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       let renderer;
       try {
@@ -333,8 +343,8 @@ function BlackHoleCanvas() {
         tB3: { value: levels[3].a.texture },
         uHorizon: { value: 0.25 },
         uAspect: { value: 1.6 },
-        uExposure: { value: 1.05 },
-        uBloom: { value: 0.72 },
+        uExposure: { value: 1.6 },
+        uBloom: { value: 1.4 },
         uFade: { value: 0 },
         uInvScale: { value: 1.0 / outScale },
         uTime: { value: 0 },
@@ -358,11 +368,6 @@ function BlackHoleCanvas() {
       let qualityChecked = false;
       let resizeObserver;
 
-      const requestRender = () => {
-        if (!reduced) return;
-        requestAnimationFrame(() => render(4.0, el));
-      };
-
       function resize() {
         const w = hero.clientWidth;
         const h = hero.clientHeight;
@@ -382,24 +387,18 @@ function BlackHoleCanvas() {
 
         const cols = hero.querySelector(".cols");
         const horizon = Math.min(0.5, Math.max(0.2, ((cols?.offsetHeight ?? 220) + 56) / h));
-        // Smaller apparent shadow keeps the event-horizon "ball" compact like the reference.
-        const shadow = Math.min(0.135, 0.20 * w / h);
+        const shadow = Math.min(0.13, 0.13 * w / h);
         sceneUniforms.uRes.value.set(sw, sh);
         sceneUniforms.uHorizon.value = horizon;
         sceneUniforms.uShadow.value = shadow;
-        requestRender();
+        // Keep the final-pass horizon + aspect in sync with the scene pass
+        finalUniforms.uHorizon.value = horizon;
+        finalUniforms.uAspect.value = w / h;
       }
 
-      const BASE_EL = 0.04;
+      // Fixed camera elevation — no hover tilt, disk always perfectly angled
+      const BASE_EL = 0.055;
       let el = BASE_EL;
-      let targetEl = BASE_EL;
-      const onPointerMove = (event) => {
-        const py = Math.min(1, Math.max(0, event.clientY / window.innerHeight));
-        targetEl = 0.012 + (1 - py) * 0.15;
-        requestRender();
-      };
-
-      window.addEventListener("pointermove", onPointerMove, { passive: true });
 
       function render(t, elev) {
         sceneUniforms.uTime.value = t;
@@ -436,15 +435,18 @@ function BlackHoleCanvas() {
       let acc = 0;
       let animationFrame;
 
+      // Always run the animation loop — the flowing accretion disk IS the effect.
       function frame(now) {
         animationFrame = requestAnimationFrame(frame);
         const t = (now - start) / 1000;
+
+        // entrance: camera settles while scene fades up
         const p = Math.min(1, Math.max(0, (t - 0.2) / 3.5));
         const eased = 1 - Math.pow(1 - p, 3);
-        el += (targetEl - el) * 0.06;
         finalUniforms.uFade.value = Math.min(1, t / 1.6);
-        render(t, el + (1 - eased) * 0.22);
+        render(t, el + (1 - eased) * 0.18);
 
+        // adaptive quality: drop resolution once if GPU is struggling
         frames++;
         if (!qualityChecked && frames > 30 && frames <= 90) {
           acc += now - last;
@@ -463,17 +465,11 @@ function BlackHoleCanvas() {
       resizeObserver.observe(hero);
       resize();
 
-      if (reduced) {
-        finalUniforms.uFade.value = 1;
-        render(4.0, el);
-      } else {
-        animationFrame = requestAnimationFrame(frame);
-      }
+      animationFrame = requestAnimationFrame(frame);
 
       cleanup = () => {
         cancelAnimationFrame(animationFrame);
         resizeObserver?.disconnect();
-        window.removeEventListener("pointermove", onPointerMove);
         rtScene.dispose();
         levels.forEach((l) => {
           l.a.dispose();
