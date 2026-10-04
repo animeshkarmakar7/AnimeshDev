@@ -204,6 +204,15 @@ void main() {
   float below = mix(1.0, exp(-max(d, 0.0) * 6.0), step(0.0, d));
   hdr += vec3(0.30, 0.12, 0.85) * haze * 0.10 * below;
 
+  // Animated violet lighting sweeps across the black-hole environment.
+  float sweepX = sin(uTime * 0.42) * 1.55;
+  float sweep = exp(-pow(q.x - sweepX, 2.0) * 3.2 - pow(q.y + sin(uTime * 0.55) * 0.08, 2.0) * 16.0);
+  float sweep2 = exp(-pow(q.x + cos(uTime * 0.27) * 1.15, 2.0) * 4.8 - pow(q.y - 0.08, 2.0) * 28.0);
+  float pulse = 0.82 + 0.18 * sin(uTime * 1.35);
+
+  hdr += vec3(0.30, 0.10, 1.0) * sweep * 0.14 * pulse;
+  hdr += vec3(0.62, 0.34, 1.0) * sweep2 * 0.09 * pulse;
+
   vec3 c = vec3(1.0) - exp(-hdr * uExposure * uFade);
   c = pow(c, vec3(0.92));
   c += (hash(gl_FragCoord.xy + fract(uTime) * 61.0) - 0.5) / 255.0;
