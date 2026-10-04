@@ -237,6 +237,7 @@ export default function Page() {
           <a href="#about">About</a>
           <a href="#projects">Projects</a>
           <a href="#stack">Skills</a>
+          <a href="#resume">Resume</a>
           <a href="#contact">Contact</a>
         </nav>
       </div>
@@ -313,6 +314,21 @@ export default function Page() {
           <p>{issuer}</p>
           <a className="cert-view" href={url} target="_blank" rel="noreferrer">VIEW CERTIFICATE <ArrowUpRight size={14}/></a>
         </article>)}</div>
+      </section>
+
+      <section id="resume" className="section">
+        <Reveal>
+          <div className="section-label">06 — Resume</div>
+          <div className="resume-section">
+            <div>
+              <h2 className="section-title">My <span>Resume</span></h2>
+              <p>View my latest resume for experience, projects, technical skills, certifications, and education.</p>
+            </div>
+            <a className="resume-view" href="https://drive.google.com/file/d/16ua2tO2ZMOOoCn2ZdBDriHp0pXprjEbx/view" target="_blank" rel="noreferrer">
+              VIEW RESUME <ArrowUpRight size={16}/>
+            </a>
+          </div>
+        </Reveal>
       </section>
 
       <BlackHoleContact />
