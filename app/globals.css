@@ -556,3 +556,43 @@ body{
   -webkit-text-fill-color:transparent;
   color:transparent;
 }
+
+
+/* Resume section */
+.resume-section{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:40px;
+  padding:42px 0;
+  border-top:1px solid rgba(123,77,255,.28);
+  border-bottom:1px solid rgba(123,77,255,.28);
+}
+.resume-section p{
+  max-width:620px;
+  margin:14px 0 0;
+  color:#9b98a8;
+  line-height:1.7;
+}
+.resume-view{
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  flex-shrink:0;
+  padding:14px 20px;
+  border:1px solid rgba(123,77,255,.6);
+  color:#eeeaff;
+  text-decoration:none;
+  letter-spacing:.08em;
+  font-size:12px;
+  transition:all .25s ease;
+}
+.resume-view:hover{
+  background:rgba(123,77,255,.14);
+  border-color:#9b72ff;
+  box-shadow:0 0 28px rgba(123,77,255,.2);
+  transform:translateY(-2px);
+}
+@media(max-width:700px){
+  .resume-section{align-items:flex-start;flex-direction:column}
+}
