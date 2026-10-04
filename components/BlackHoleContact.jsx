@@ -204,14 +204,20 @@ void main() {
   float below = mix(1.0, exp(-max(d, 0.0) * 6.0), step(0.0, d));
   hdr += vec3(0.30, 0.12, 0.85) * haze * 0.10 * below;
 
-  // Animated violet lighting sweeps across the black-hole environment.
-  float sweepX = sin(uTime * 0.42) * 1.55;
-  float sweep = exp(-pow(q.x - sweepX, 2.0) * 3.2 - pow(q.y + sin(uTime * 0.55) * 0.08, 2.0) * 16.0);
-  float sweep2 = exp(-pow(q.x + cos(uTime * 0.27) * 1.15, 2.0) * 4.8 - pow(q.y - 0.08, 2.0) * 28.0);
-  float pulse = 0.82 + 0.18 * sin(uTime * 1.35);
+  // Strong animated violet light bands moving through the scene.
+  float lightSweep = 0.5 + 0.5 * sin(uTime * 0.75 + q.x * 2.6 + q.y * 5.0);
+  float lightSweep2 = 0.5 + 0.5 * sin(uTime * 0.42 - q.x * 4.0 + q.y * 2.0);
+  float movingBeam = smoothstep(0.72, 1.0, lightSweep);
+  float movingBeam2 = smoothstep(0.80, 1.0, lightSweep2);
+  float pulse = 0.72 + 0.28 * sin(uTime * 1.7);
 
-  hdr += vec3(0.30, 0.10, 1.0) * sweep * 0.14 * pulse;
-  hdr += vec3(0.62, 0.34, 1.0) * sweep2 * 0.09 * pulse;
+  hdr += vec3(0.42, 0.08, 1.0) * movingBeam * 0.24 * pulse;
+  hdr += vec3(0.72, 0.28, 1.0) * movingBeam2 * 0.16 * pulse;
+
+  // Traveling highlight around the accretion-ring area.
+  float ringLight = exp(-abs(q.y) * 18.0) *
+                    (0.5 + 0.5 * sin(uTime * 1.25 + q.x * 5.5));
+  hdr += vec3(0.58, 0.24, 1.0) * ringLight * 0.20;
 
   vec3 c = vec3(1.0) - exp(-hdr * uExposure * uFade);
   c = pow(c, vec3(0.92));
