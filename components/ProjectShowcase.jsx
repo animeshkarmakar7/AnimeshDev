@@ -36,6 +36,7 @@ const projects = [
     github: "https://github.com/animeshkarmakar7/Sangrahak-AI-powered-Inventory-Management-system",
     accent: "FORECAST / RISK",
     image: "/sangrahak.svg",
+    image: "/Sangrahak AI Inventory Dashboard.png",
   },
   {
     slug: "saas-churn",
@@ -46,6 +47,7 @@ const projects = [
     stack: ["Python","MySQL","Pandas","Scikit-learn","XGBoost","Random Forest","SHAP","SMOTE","Power BI"],
     github: "https://github.com/animeshkarmakar7/CustomerChurnReport",
     accent: "SQL / ML",
+    image: "/Customer Churn Analytics Dashboard.png",
   },
 ];
 
