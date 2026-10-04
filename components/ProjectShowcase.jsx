@@ -13,7 +13,7 @@ const projects = [
     stack: ["FastAPI","PostgreSQL","MinIO","Kafka","Celery","Tesseract","LangChain","ChromaDB","Sentence-Transformers","Gemini API","BM25","Docker","Streamlit"],
     github: "https://github.com/animeshkarmakar7/Document-Verification-AI",
     accent: "LEGAL / RAG",
-    image: "/LegalDocAI Document Verification Dashboard(2).png",
+    image: "/LegalDocAI Document Verification Dashboard.png",
   },
   {
     slug: "tradeguard-ai",
@@ -24,6 +24,7 @@ const projects = [
     stack: ["Python","LangGraph","Qdrant","BGE","BM25Plus","RRF Fusion","FastAPI","Streamlit"],
     github: "https://github.com/animeshkarmakar7/GLOBAL-TRADE-CUSTOMS-COMPLIANCE-ASSISTANT",
     accent: "AGENTS / SEARCH",
+    image: "/Global Trade Compliance Dashboard.png",
   },
   {
     slug: "sangrahak",
