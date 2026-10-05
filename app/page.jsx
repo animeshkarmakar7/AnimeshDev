@@ -62,10 +62,10 @@ const certifications = [
 
 const education = [
   {
-    year: "2022–2026",
-    degree: "B.E. in Artificial Intelligence & Data Science",
-    institution: "Terna Engineering College, Mumbai University",
-    score: "CGPA 7.5 / 10",
+    year: "2019–2020",
+    degree: "Secondary School Certificate (SSC)",
+    institution: "Sai English High School, Kalyan",
+    score: "90.20%",
   },
   {
     year: "2020–2022",
@@ -74,10 +74,10 @@ const education = [
     score: "79.17%",
   },
   {
-    year: "2019–2020",
-    degree: "Secondary School Certificate (SSC)",
-    institution: "Sai English High School, Kalyan",
-    score: "90.20%",
+    year: "2022–2026",
+    degree: "B.E. in Artificial Intelligence & Data Science",
+    institution: "Terna Engineering College, Mumbai University",
+    score: "CGPA 7.5 / 10",
   },
 ];
 
