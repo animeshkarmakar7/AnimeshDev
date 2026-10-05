@@ -61,9 +61,24 @@ const certifications = [
 ];
 
 const education = [
-  ["2020","Sai English High School, Kalyan","SSC — 90.20%"],
-  ["2022","R.K. Talreja College, Ulhasnagar","HSC — 79.17%"],
-  ["2022–2026","Terna Engineering College, Mumbai University","B.E. Artificial Intelligence & Data Science — CGPA 7.5/10"],
+  {
+    year: "2022–2026",
+    degree: "B.E. in Artificial Intelligence & Data Science",
+    institution: "Terna Engineering College, Mumbai University",
+    score: "CGPA 7.5 / 10",
+  },
+  {
+    year: "2020–2022",
+    degree: "Higher Secondary Certificate (HSC — Science)",
+    institution: "R.K. Talreja College, Ulhasnagar",
+    score: "79.17%",
+  },
+  {
+    year: "2019–2020",
+    degree: "Secondary School Certificate (SSC)",
+    institution: "Sai English High School, Kalyan",
+    score: "90.20%",
+  },
 ];
 
 function useScrollFx() {
@@ -237,7 +252,7 @@ export default function Page() {
           <a href="#about">About</a>
           <a href="#projects">Projects</a>
           <a href="#stack">Skills</a>
-          <a href="#resume">Resume</a>
+          <a href="https://drive.google.com/file/d/1lj_EiwxGbcfdg0p_kW5sXVPiRj5y9Yds/view" target="_blank" rel="noreferrer">Resume</a>
           <a href="#contact">Contact</a>
         </nav>
       </div>
@@ -301,34 +316,48 @@ export default function Page() {
       </section>
 
       <section id="education" className="section">
-        <Reveal><div className="section-label">04 — Education</div><div className="edu-header"><h2 className="section-title">My <span>Journey</span></h2><p>A chronological path from school to a B.E. in Artificial Intelligence &amp; Data Science.</p></div></Reveal>
-        <div className="education-path reveal"><div className="education-line"/>{education.map(([year,title,detail],i)=><div className="education-node" key={title}><div className="education-dot"><GraduationCap size={17}/></div><div className="education-year">{year}</div><h3>{title}</h3><p>{detail}</p></div>)}</div>
+        <Reveal>
+          <div className="section-label">04 — Education</div>
+          <div className="edu-header">
+            <h2 className="section-title">Academic <span>Journey</span></h2>
+            <p>Chronological path from high school to B.E. in Artificial Intelligence &amp; Data Science.</p>
+          </div>
+        </Reveal>
+        <div className="education-path reveal">
+          <div className="education-line" />
+          {education.map((item) => (
+            <div className="education-node" key={item.degree}>
+              <div className="education-dot"><GraduationCap size={17} /></div>
+              <div className="education-year">{item.year}</div>
+              <h3>{item.degree}</h3>
+              <p className="education-institution">{item.institution}</p>
+              <div className="education-score"><span>{item.score}</span></div>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section id="certifications" className="section">
-        <Reveal><div className="section-label">05 — Certifications</div><div className="cert-header"><h2 className="section-title">Proof of <span>Learning</span></h2><p>Verified credentials and learning certificates. Select any card to view the certificate.</p></div></Reveal>
-        <div className="cert-grid">{certifications.map(([title,issuer,url],i)=><article className="cert-card reveal" key={title}>
-          <span className="cert-index">{String(i+1).padStart(2,"0")}</span>
-          <Award size={19}/>
-          <h3>{title}</h3>
-          <p>{issuer}</p>
-          <a className="cert-view" href={url} target="_blank" rel="noreferrer">VIEW CERTIFICATE <ArrowUpRight size={14}/></a>
-        </article>)}</div>
-      </section>
-
-      <section id="resume" className="section">
         <Reveal>
-          <div className="section-label">06 — Resume</div>
-          <div className="resume-section">
-            <div>
-              <h2 className="section-title">My <span>Resume</span></h2>
-              <p>View my latest resume for experience, projects, technical skills, certifications, and education.</p>
-            </div>
-            <a className="resume-view" href="https://drive.google.com/file/d/16ua2tO2ZMOOoCn2ZdBDriHp0pXprjEbx/view" target="_blank" rel="noreferrer">
-              VIEW RESUME <ArrowUpRight size={16}/>
-            </a>
+          <div className="section-label">05 — Certifications</div>
+          <div className="cert-header">
+            <h2 className="section-title">Proof of <span>Learning</span></h2>
+            <p>Verified credentials and learning certificates. Select any card to view the certificate.</p>
           </div>
         </Reveal>
+        <div className="cert-grid">
+          {certifications.map(([title, issuer, url], i) => (
+            <article className="cert-card reveal" key={title}>
+              <span className="cert-index">{String(i + 1).padStart(2, "0")}</span>
+              <Award size={19} />
+              <h3>{title}</h3>
+              <p>{issuer}</p>
+              <a className="cert-view" href={url} target="_blank" rel="noreferrer">
+                VIEW CERTIFICATE <ArrowUpRight size={14} />
+              </a>
+            </article>
+          ))}
+        </div>
       </section>
 
       <BlackHoleContact />
