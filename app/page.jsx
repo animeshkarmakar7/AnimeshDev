@@ -252,7 +252,7 @@ export default function Page() {
           <a href="#about">About</a>
           <a href="#projects">Projects</a>
           <a href="#stack">Skills</a>
-          <a href="https://drive.google.com/file/d/1lj_EiwxGbcfdg0p_kW5sXVPiRj5y9Yds/view" target="_blank" rel="noreferrer">Resume</a>
+          <a href="https://drive.google.com/file/d/16ua2tO2ZMOOoCn2ZdBDriHp0pXprjEbx/view" target="_blank" rel="noreferrer">Resume</a>
           <a href="#contact">Contact</a>
         </nav>
       </div>
